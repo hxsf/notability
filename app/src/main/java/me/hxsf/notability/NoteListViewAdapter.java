@@ -55,13 +55,13 @@ public class NoteListViewAdapter extends BaseAdapter {
         //获取控件
         final ImageView imageView = (ImageView) view.findViewById(R.id.minimap);
         final TextView createTime = (TextView) view.findViewById(R.id.lastModified);
-        final TextView title = (TextView) view.findViewById(R.id.title);
+        final TextView title = (TextView) view.findViewById(R.id.note_title);
         //对控件赋值
         final Note note = (Note) getItem(position);
         if (note != null) {
-            if (imageView != null) {
-                imageView.setImageBitmap(note.getMinimap());
-            }
+//            if (imageView != null) {
+//                imageView.setImageBitmap(note.getMinimap());
+//            }
             createTime.setText(note.getLastModified());
             title.setText(note.getTitle());
         }

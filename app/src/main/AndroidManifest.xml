@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="me.hxsf.notability">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.hxsf.notability">
 
-    <application android:allowBackup="true" android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name" android:supportsRtl="true" android:theme="@style/AppTheme">
-        <activity android:name=".CollectionListActivity" android:label="@string/app_name"
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".CollectionListActivity"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -11,15 +18,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CollectionDetailActivity"
+        <activity
+            android:name=".CollectionDetailActivity"
             android:label="@string/title_collection_detail"
             android:parentActivityName=".CollectionListActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
                 android:value="me.hxsf.notability.CollectionListActivity" />
         </activity>
+
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+        <activity
+            android:name=".DrawActivity"
+            android:label="@string/title_activity_draw"
+            android:parentActivityName=".CollectionDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="me.hxsf.notability.CollectionDetailActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -1,7 +1,5 @@
 package me.hxsf.notability.data;
 
-import android.graphics.Bitmap;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,22 +10,26 @@ import java.util.Date;
  *          封装了笔记的 标题，上一次修改的时间（方便 redo）,构成笔记的片段
  */
 public class Note {
-    private Bitmap minimap;
-    private String title;
-    private Date lastModified;
-    private ArrayList<Paragraph> paragraphs;
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    public String title;
+    public Date lastModified;
+    public ArrayList<Paragraph> paragraphs;
+    final public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     public String getTitle() {
         return title;
     }
 
-    public Bitmap getMinimap() {
-        return minimap;
-    }
-
     public String getLastModified() {
         return sdf.format(lastModified);
+    }
+
+    public ArrayList<Paragraph> getParagraphs() {
+        return paragraphs;
+    }
+
+    public Note() {
+        title="未命名";
+        paragraphs =new ArrayList<>();
     }
 
     public Note(Date lastModified, ArrayList<Paragraph> paragraphs, String title) {
@@ -37,7 +39,8 @@ public class Note {
     }
 
     /**
-     * @param paragraph
+     * addParagraph：添加一个片段
+     * @param paragraph  要添加的片段的内容
      * @return
      */
     public boolean addParagraph(Paragraph paragraph){
@@ -45,7 +48,8 @@ public class Note {
     }
 
     /**
-     * @param index
+     * getParagraph：获取片段
+     * @param index 要获取的片段下标
      * @return
      */
     public Paragraph getParagraph(int index){
@@ -53,6 +57,7 @@ public class Note {
     }
 
     /**
+     * 重载：getParagraph：获取最后一个片段
      * @return
      */
     public Paragraph getParagraph(){
@@ -65,7 +70,7 @@ public class Note {
     }
 
     /**
-     * 判断整个笔记是否有音频
+     * hasAudio：判断整个笔记是否有音频
      * @return
      */
     public boolean hasAudio(){
@@ -76,7 +81,7 @@ public class Note {
     }
 
     /**
-     * 修改标题
+     * changeTitle：修改标题
      * @param title 要修改的标题名
      */
     public void changeTitle(String title){
@@ -84,7 +89,7 @@ public class Note {
     }
 
     /**
-     * 修改某一段的内容
+     * chnageParagraph：修改某一段的内容
      * @param index  要被替换的内容的位置
      * @param paragraph  要修改的内容
      */

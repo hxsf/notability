@@ -69,7 +69,7 @@ public class DrawActivity extends AppCompatActivity {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
+// TODO move onTouchEvent from Activility to ImageView
 //        float xx = event.getHistoricalX();
         float x = event.getX();
         float y = event.getY();

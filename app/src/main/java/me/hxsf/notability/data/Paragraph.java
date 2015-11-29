@@ -23,6 +23,7 @@ public class Paragraph {
     public Paragraph() {
         lines=new ArrayList<>();
         hasAudio=false;
+        nowIndex=lines.size()-1;
     }
 
     /**
@@ -31,6 +32,7 @@ public class Paragraph {
     public Paragraph( boolean hasAudio) {
         lines=new ArrayList<>();
         this.hasAudio=hasAudio;
+        nowIndex=lines.size()-1;
     }
 
     /**
@@ -42,13 +44,12 @@ public class Paragraph {
         this.audio = audio;
         this.hasAudio = hasAudio;
         this.lines = lines;
-        nowIndex=lines.size()-1;
+
     }
     /**
      * @return
      */
     public boolean draw(){
-
         return true;
     }
     /**
@@ -61,7 +62,22 @@ public class Paragraph {
             hasAudio=true;
         return hasAudio;
     }
-    public boolean redo(){
+    public  void setLines(int index,Line line){
+        lines.set(index,line);
+    }
+    public void addLine(Line line){
+        lines.add(line);
+    }
+    public ArrayList<Line> getLines(){
+        return lines;
+    }
+    public Line getLine(int index){
+        return lines.get(index);
+    }
+    public int getLineSize(){
+        return lines.size();
+    }
+    /*public boolean redo(){
         if (nowIndex<lines.size()){
             lines.get(nowIndex).redo();
             nowIndex++;
@@ -76,5 +92,5 @@ public class Paragraph {
             return true;
         }
         return false;
-    }
+    }*/
 }

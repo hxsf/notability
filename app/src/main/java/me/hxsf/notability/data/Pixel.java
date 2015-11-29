@@ -32,7 +32,6 @@ public class Pixel {
         this.x = x;
         this.y = y;
     }
-
     public int getLastcolor() {
         return lastcolor;
     }

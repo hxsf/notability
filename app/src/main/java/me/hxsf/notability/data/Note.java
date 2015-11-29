@@ -49,6 +49,9 @@ public class Note {
     public Paragraph getParagraph(){
         return paragraphs.get(paragraphs.size() - 1);
     }
+    public int getParagraphSize(){
+        return paragraphs.size();
+    }
     public boolean removeParagraph(int index){
         //TODO 不确定 return 什么值
         paragraphs.remove(index);
@@ -79,7 +82,7 @@ public class Note {
      * @param index  要被替换的内容的位置
      * @param paragraph  要修改的内容
      */
-    public void chnageParagraph(int index,Paragraph paragraph){
+    public void setParagraph(int index,Paragraph paragraph){
         paragraphs.set(index, paragraph);
     }
 }

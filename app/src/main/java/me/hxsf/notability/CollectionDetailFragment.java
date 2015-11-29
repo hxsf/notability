@@ -1,14 +1,23 @@
 package me.hxsf.notability;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Date;
+
+import me.hxsf.notability.data.Note;
 import me.hxsf.notability.dummy.DummyContent;
 
 /**
@@ -28,6 +37,8 @@ public class CollectionDetailFragment extends Fragment {
      * The dummy content this fragment is presenting.
      */
     private DummyContent.DummyItem mItem;
+
+    private ArrayList<Note> noteArrayList = new ArrayList<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -55,13 +66,28 @@ public class CollectionDetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.collection_detail, container, false);
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.collection_detail)).setText(mItem.details);
+//            ((TextView) rootView.findViewById(R.id.collection_detail)).setText(mItem.details);
+            for (int i=0;i< Integer.parseInt(getArguments().getString(ARG_ITEM_ID));i++){
+                noteArrayList.add(new Note(new Date(),null, "Note "+i));
+            }
+            NoteListViewAdapter noteListViewAdapter = new NoteListViewAdapter(noteArrayList, getActivity());
+            ListView listView = (ListView) rootView;
+            listView.setAdapter(noteListViewAdapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.v("s",position+"");
+//                    final LinearLayout hide = (LinearLayout)view.findViewById(R.id.note);
+                    Intent intent = new Intent(getActivity(), DrawActivity.class);
+                    intent.putExtra("title", ((TextView)view.findViewById(R.id.note_title)).getText());
+                    startActivity(intent);                }
+            });
         }
 
         return rootView;

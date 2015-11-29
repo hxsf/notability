@@ -1,5 +1,6 @@
 package me.hxsf.notability.data;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -84,5 +85,14 @@ public class Note {
      */
     public void setParagraph(int index,Paragraph paragraph){
         paragraphs.set(index, paragraph);
+    }
+
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    public String getLastModified() {
+        return sdf.format(lastModified);
+    }
+
+    public String getTitle() {
+        return title;
     }
 }

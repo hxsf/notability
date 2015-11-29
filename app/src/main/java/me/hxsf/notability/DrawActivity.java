@@ -1,21 +1,27 @@
 package me.hxsf.notability;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import me.hxsf.notability.draw.Drawer;
+
 public class DrawActivity extends AppCompatActivity {
+
+    ImageView img;
+    float lastx, lasty;
+    /*  Canvas canvas;
+      Paint paint = new Paint();
+      Bitmap bitmap;*/
+    Drawer drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,48 +30,34 @@ public class DrawActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(getIntent().getStringExtra("title"));
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
+
         img = (ImageView) findViewById(R.id.draw_space);
-    }
-    ImageView img;
-    Canvas canvas;
-    Paint paint = new Paint();
-    Bitmap bitmap;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        String a = getIntent().getStringExtra("title");
+        if (a.equals("")) {
+            a = "未命名 " + ((new SimpleDateFormat("yyyy-MM-dd hh:mm")).format(new Date()));
+            img.post(new Runnable() {
+                @Override
+                public void run() {
+                    drawer = new Drawer(img, Color.BLACK, 10f);
+                    drawer.onNewNote();
+                }
+            });
+        } else {
+            //TODO read file/database to get data;
+        }
 
-    /**
-     * Dispatch onResume() to fragments.  Note that for better inter-operation
-     * with older versions of the platform, at the point of this call the
-     * fragments attached to the activity are <em>not</em> resumed.  This means
-     * that in some cases the previous state may still be saved, not allowing
-     * fragment transactions that modify the state.  To correctly interact
-     * with fragments in their proper state, you should instead override
-     * {@link #onResumeFragments()}.
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        img.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                img.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                bitmap = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.ARGB_8888);
-                canvas = new Canvas(bitmap);
-            }
-        });
-
+        getSupportActionBar().setTitle(a);
     }
 
-
-    float lastx,lasty;
     /**
      * Called when a touch screen event was not handled by any of the views
      * under it.  This is most useful to process touch events that happen
@@ -79,14 +71,19 @@ public class DrawActivity extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent event) {
 
 //        float xx = event.getHistoricalX();
-        float x = event.getX()-150;
-        float y = event.getY()-150;
-        if (event.getAction() == MotionEvent.ACTION_MOVE){
-            canvas.drawLine(lastx, lasty, x, y, paint);
-            img.setImageBitmap(bitmap);
+        float x = event.getX();
+        float y = event.getY();
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            drawer.drawStart(x, y);
         }
-        lastx = x;
-        lasty = y;
+        if (event.getAction() == MotionEvent.ACTION_MOVE){
+            drawer.drawing(x, y);
+            lastx = x;
+            lasty = y;
+        }
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            drawer.drawEnd();
+        }
         return super.onTouchEvent(event);
     }
 

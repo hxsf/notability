@@ -15,7 +15,7 @@ import me.hxsf.notability.data.Pixel;
 /**
  * Created by chen on 2015/11/28.
  */
-public class drawer {
+public class Drawer {
     private Canvas canvas;  //画布
     private  Bitmap bitmap; //位图
     private Paint paint;//笔触
@@ -35,12 +35,12 @@ public class drawer {
      * @param color  笔触颜色
      * @param penSize  笔触粗细
      */
-    public drawer( ImageView imageView,int color,float penSize) {
+    public Drawer(ImageView imageView, int color, float penSize) {
         this.imageView = imageView;
         width=imageView.getWidth();
         height=imageView.getHeight();
         //初始化 bitmap 对象，将其的宽高设为imageView 的8倍，用于解决imageView 的放大问题，现在最多放大8倍
-        bitmap=Bitmap.createBitmap(width * 8, height * 8, Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(width * 1, height * 1, Bitmap.Config.ARGB_8888);
         //初始化canvas 对象，canvas 对象宽度与bitmap一致
         canvas=new Canvas(bitmap);
         //初始化笔触
@@ -119,6 +119,7 @@ public class drawer {
         int lastColor=bitmap.getPixel((int) x,(int)y);//获取绘制之前（x，y）点的颜色
         line.addPixel(new Pixel(x, y, lastColor)); //初始化一个新的像素点对象并添加到 line 对象中
         canvas.drawLine(lastxX, lastY, x, y, paint);//画线
+        imageView.setImageBitmap(bitmap);
         lastxX=x;//更新起始点
         lastY=y;
     }

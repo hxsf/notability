@@ -10,9 +10,12 @@ import java.util.Date;
  *          封装了笔记的 标题，上一次修改的时间（方便 redo）,构成笔记的片段
  */
 public class Note {
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     public String title;
     public Date lastModified;
+    //    TODO paragraph 类可以删除
     public ArrayList<Paragraph> paragraphs;
+    public ArrayList<Line> lines;
 
     public Note() {
         title="未命名";
@@ -50,9 +53,11 @@ public class Note {
     public Paragraph getParagraph(){
         return paragraphs.get(paragraphs.size() - 1);
     }
+
     public int getParagraphSize(){
         return paragraphs.size();
     }
+
     public boolean removeParagraph(int index){
         //TODO 不确定 return 什么值
         paragraphs.remove(index);
@@ -87,7 +92,6 @@ public class Note {
         paragraphs.set(index, paragraph);
     }
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     public String getLastModified() {
         return sdf.format(lastModified);
     }

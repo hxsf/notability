@@ -1,8 +1,5 @@
 package me.hxsf.notability.data;
 
-import android.graphics.Canvas;
-import android.provider.MediaStore;
-
 import java.util.ArrayList;
 
 /**
@@ -15,7 +12,6 @@ public class Paragraph {
     public String audio;
     public ArrayList<Line> lines;
     public boolean hasAudio;
-    private int nowIndex;
 
     /**
      * 没有音频的一段
@@ -23,7 +19,6 @@ public class Paragraph {
     public Paragraph() {
         lines=new ArrayList<>();
         hasAudio=false;
-        nowIndex=lines.size()-1;
     }
 
     /**
@@ -32,7 +27,6 @@ public class Paragraph {
     public Paragraph( boolean hasAudio) {
         lines=new ArrayList<>();
         this.hasAudio=hasAudio;
-        nowIndex=lines.size()-1;
     }
 
     /**
@@ -74,9 +68,7 @@ public class Paragraph {
     public Line getLine(int index){
         return lines.get(index);
     }
-    public int getLineSize(){
-        return lines.size();
-    }
+
     /*public boolean redo(){
         if (nowIndex<lines.size()){
             lines.get(nowIndex).redo();

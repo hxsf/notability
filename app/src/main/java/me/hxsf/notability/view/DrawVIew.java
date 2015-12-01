@@ -1,13 +1,11 @@
 package me.hxsf.notability.view;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.widget.ImageView;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -17,40 +15,26 @@ import me.hxsf.notability.draw.Drawer;
 /**
  * Created by hxsf on 15－11－30.
  */
-public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
+public class DrawView extends ImageView {
     LinkedBlockingQueue<BaseLine> bq = new LinkedBlockingQueue();
     private Drawing drawing; // SurfaceView通常需要自己单独的线程来播放动画
-    private SurfaceHolder surfaceHolder;
     private Drawer drawer;
 
     public DrawView(Context context) {
         super(context);
-        this.surfaceHolder = this.getHolder();
-        this.surfaceHolder.addCallback(this);
     }
 
     public DrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.surfaceHolder = this.getHolder();
-        this.surfaceHolder.addCallback(this);
+        this.post(() -> {
+            this.drawer = Drawer.getDrawer(this, Color.BLACK, 1f);
+            this.drawing = new Drawing(drawer, bq);
+            this.drawing.start();
+        });
+
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        Log.v("sssss", "SurfaceView Created");
-        bq.offer(new BaseLine(1f, 2f, 3f, 4f));
-        this.drawing = new Drawing(this.surfaceHolder, bq);
-        this.drawing.start();
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.v("sssss", "SurfaceView changed");
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.v("sssss", "SurfaceView已经销毁");
+    public void surfaceDestroyed() {
         this.drawing.shut();
     }
 
@@ -62,19 +46,19 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
 
 
 class Drawing extends Thread {
-
-    private SurfaceHolder holder;
-    private Canvas canvas;
     private LinkedBlockingQueue<BaseLine> bq;
     private Paint paint;
     private boolean isrun;
+    private Drawer drawer;
 
-    public Drawing(SurfaceHolder holder, LinkedBlockingQueue<BaseLine> b) {
-        this.holder = holder;
+    public Drawing(Drawer drawer, LinkedBlockingQueue<BaseLine> b) {
+        this.drawer = drawer;
         this.bq = b;
+
         paint = new Paint();
         paint.setAntiAlias(true);    //消除锯齿
         paint.setStyle(Paint.Style.STROKE);    //设置画笔风格为描边
+        paint.setStrokeWidth(20f);
         paint.setColor(Color.BLACK);
         isrun = true;
     }
@@ -90,20 +74,11 @@ class Drawing extends Thread {
             BaseLine bl = bq.poll();
             while (bl != null) {
                 Log.v("bl", bl.toString());
-                canvas = this.holder.lockCanvas(); // 通过lockCanvas加锁并得到該SurfaceView的画布
-                canvas.drawColor(Color.WHITE);
-//                canvas.drawLine(bl.x1, bl.y1, bl.x2, bl.y2, paint);
+                drawer.draw(bl);
                 //TODO chenmeng
 
-                this.holder.unlockCanvasAndPost(canvas); // 释放锁并提交画布进行重绘
                 bl = bq.poll();
             }
-//            try {
-//                Log.v("s","a");
-//                Thread.sleep(100); // 这个就相当于帧频了，数值越小画面就越流畅
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
         }
     }
 }

@@ -33,13 +33,13 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
         super(context, attrs);
         this.surfaceHolder = this.getHolder();
         this.surfaceHolder.addCallback(this);
+        drawer = Drawer.getDrawer(Color.BLACK, 1f);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.v("sssss", "SurfaceView Created");
-        bq.offer(new BaseLine(1f, 2f, 3f, 4f));
-        this.drawing = new Drawing(this.surfaceHolder, bq);
+        this.drawing = new Drawing(this.surfaceHolder, bq, drawer);
         this.drawing.start();
     }
 
@@ -68,10 +68,12 @@ class Drawing extends Thread {
     private LinkedBlockingQueue<BaseLine> bq;
     private Paint paint;
     private boolean isrun;
+    private Drawer drawer;
 
-    public Drawing(SurfaceHolder holder, LinkedBlockingQueue<BaseLine> b) {
+    public Drawing(SurfaceHolder holder, LinkedBlockingQueue<BaseLine> b, Drawer d) {
         this.holder = holder;
         this.bq = b;
+        drawer = d;
         paint = new Paint();
         paint.setAntiAlias(true);    //消除锯齿
         paint.setStyle(Paint.Style.STROKE);    //设置画笔风格为描边
@@ -82,7 +84,6 @@ class Drawing extends Thread {
     public void shut() {
         isrun = false;
     }
-
     @Override
     public void run() {
         Log.v("run", isrun + "");
@@ -94,7 +95,7 @@ class Drawing extends Thread {
                 canvas.drawColor(Color.WHITE);
 //                canvas.drawLine(bl.x1, bl.y1, bl.x2, bl.y2, paint);
                 //TODO chenmeng
-
+                canvas = drawer.draw(canvas,bl);
                 this.holder.unlockCanvasAndPost(canvas); // 释放锁并提交画布进行重绘
                 bl = bq.poll();
             }

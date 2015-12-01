@@ -49,10 +49,6 @@ public class Line {
         return Bitmap.createBitmap(bitmap, x, y, width, height);
     }
 
-    public void addBitmap(Bitmap bitmap) {
-        bitmaps.add(bitmap);
-    }
-
     public ArrayList<Bitmap> getBitmaps() {
         return bitmaps;
     }

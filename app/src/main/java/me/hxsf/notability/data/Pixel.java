@@ -9,7 +9,6 @@ public class Pixel {
     private float y;
     private long timestamp;
     private int lastcolor;
-    private boolean isNewLine = false;
 
     public Pixel() {
     }
@@ -59,14 +58,6 @@ public class Pixel {
 
     public void setY(float y) {
         this.y = y;
-    }
-
-    public boolean isNewLine() {
-        return isNewLine;
-    }
-
-    public void setIsNewLine(boolean isNewLine) {
-        this.isNewLine = isNewLine;
     }
 
 }

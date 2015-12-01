@@ -11,7 +11,8 @@
     <me.hxsf.notability.view.DrawView
         android:id="@+id/draw_space"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="#fff"/>
     <Button
         android:id="@+id/undo"
         android:layout_width="wrap_content"

@@ -28,6 +28,7 @@ public class DrawActivity extends AppCompatActivity {
       Bitmap bitmap;*/
     Drawer drawer;
     float lastx, lasty;
+    boolean isstart;
     BaseLine line;
 
     @Override
@@ -56,16 +57,19 @@ public class DrawActivity extends AppCompatActivity {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     lastx = x;
                     lasty = y;
+                    isstart = true;
                 }
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    line = new BaseLine(lastx, lasty, x, y);
+                    line = new BaseLine(isstart, lastx, lasty, x, y);
                     img.offer(line);
                     lastx = x;
                     lasty = y;
+                    isstart = false;
                 }
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    line = new BaseLine(lastx, lasty, x, y);
+                    line = new BaseLine(isstart, lastx, lasty, x, y);
                     img.offer(line);
+                    isstart = false;
                 }
                 return true;
             }
@@ -77,8 +81,8 @@ public class DrawActivity extends AppCompatActivity {
 //            img.post(new Runnable() {
 //                @Override
 //                public void run() {
-//                    drawer = new Drawer(null, Color.BLACK, 10f);
-//                    drawer.onNewNote();
+                    drawer = Drawer.getDrawer(Color.BLACK, 10f);
+                    drawer.onNewNote();
 //                }
 //            });
         } else {
@@ -86,7 +90,8 @@ public class DrawActivity extends AppCompatActivity {
         }
 
         getSupportActionBar().setTitle(a);
-        Button button = (Button) findViewById(R.id.undo);
+        //TODO 给undo 函数传 canvas 参数
+      /*  Button button = (Button) findViewById(R.id.undo);
         button.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -94,7 +99,7 @@ public class DrawActivity extends AppCompatActivity {
                         drawer.undo();
                     }
                 }
-        );
+        );*/
     }
 
     /**
@@ -102,7 +107,7 @@ public class DrawActivity extends AppCompatActivity {
      * under it.  This is most useful to process touch events that happen
      * outside of your window bounds, where there is no view to receive it.
      *
-     * @param event The touch screen event being processed.
+     * @ param event The touch screen event being processed.
      * @return Return true if you have consumed the event, false if you haven't.
      * The default implementation always returns false.
      */

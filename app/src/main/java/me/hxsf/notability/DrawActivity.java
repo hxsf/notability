@@ -1,27 +1,30 @@
 package me.hxsf.notability;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
-import android.widget.ImageView;
+import android.view.View;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import me.hxsf.notability.draw.BaseLine;
 import me.hxsf.notability.draw.Drawer;
+import me.hxsf.notability.view.DrawView;
 
 public class DrawActivity extends AppCompatActivity {
 
-    ImageView img;
-    float lastx, lasty;
+    DrawView img;
     /*  Canvas canvas;
       Paint paint = new Paint();
       Bitmap bitmap;*/
     Drawer drawer;
+    float lastx, lasty;
+    BaseLine line;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,52 +42,46 @@ public class DrawActivity extends AppCompatActivity {
 //            }
 //        });
 
-        img = (ImageView) findViewById(R.id.draw_space);
+        img = (DrawView) findViewById(R.id.draw_space);
+        img.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.v("s", event.toString());
+                float x = event.getX();
+                float y = event.getY();
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    lastx = x;
+                    lasty = y;
+                }
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    line = new BaseLine(lastx, lasty, x, y);
+                    img.offer(line);
+                    lastx = x;
+                    lasty = y;
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    line = new BaseLine(lastx, lasty, x, y);
+                    img.offer(line);
+                }
+                return true;
+            }
+        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         String a = getIntent().getStringExtra("title");
         if (a.equals("")) {
             a = "未命名 " + ((new SimpleDateFormat("yyyy-MM-dd hh:mm")).format(new Date()));
-            img.post(new Runnable() {
-                @Override
-                public void run() {
-                    drawer = new Drawer(img, Color.BLACK, 10f);
-                    drawer.onNewNote();
-                }
-            });
+//            img.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    drawer = new Drawer(null, Color.BLACK, 10f);
+//                    drawer.onNewNote();
+//                }
+//            });
         } else {
             //TODO read file/database to get data;
         }
 
         getSupportActionBar().setTitle(a);
-    }
-
-    /**
-     * Called when a touch screen event was not handled by any of the views
-     * under it.  This is most useful to process touch events that happen
-     * outside of your window bounds, where there is no view to receive it.
-     *
-     * @param event The touch screen event being processed.
-     * @return Return true if you have consumed the event, false if you haven't.
-     * The default implementation always returns false.
-     */
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-// TODO move onTouchEvent from Activility to ImageView
-//        float xx = event.getHistoricalX();
-        float x = event.getX();
-        float y = event.getY();
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            drawer.drawStart(x, y);
-        }
-        if (event.getAction() == MotionEvent.ACTION_MOVE){
-            drawer.drawing(x, y);
-            lastx = x;
-            lasty = y;
-        }
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            drawer.drawEnd();
-        }
-        return super.onTouchEvent(event);
     }
 
     @Override
@@ -93,4 +90,6 @@ public class DrawActivity extends AppCompatActivity {
         inflater.inflate(R.menu.menu_activity_draw, menu);
         return true;
     }
+
+
 }

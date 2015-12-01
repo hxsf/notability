@@ -1,8 +1,6 @@
 package me.hxsf.notability.data;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 
 import java.util.ArrayList;
 
@@ -12,10 +10,10 @@ import java.util.ArrayList;
  *      封装了笔触的颜色，粗度，构成这个笔画的所有像素点，画布
  */
 public class Line {
-    private int color;
-    private  float penSize;
-    private ArrayList<Pixel> pixels;
     Bitmap lastArea;
+    private int color;
+    private float penSize;
+    private ArrayList<Pixel> pixels;
     public  Line(int color,float penSize){
         pixels=new ArrayList<>();
         this.color=color;

@@ -7,6 +7,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import java.text.SimpleDateFormat;
@@ -47,7 +49,7 @@ public class DrawActivity extends AppCompatActivity {
             img.post(new Runnable() {
                 @Override
                 public void run() {
-                    drawer = new Drawer(img, Color.BLACK, 10f);
+                    drawer = new Drawer(img, Color.BLACK, 20f);
                     drawer.onNewNote();
                 }
             });
@@ -56,6 +58,15 @@ public class DrawActivity extends AppCompatActivity {
         }
 
         getSupportActionBar().setTitle(a);
+        Button button = (Button) findViewById(R.id.undo);
+        button.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        drawer.undo();
+                    }
+                }
+        );
     }
 
     /**
@@ -77,6 +88,8 @@ public class DrawActivity extends AppCompatActivity {
             drawer.drawStart(x, y);
         }
         if (event.getAction() == MotionEvent.ACTION_MOVE){
+            x = event.getX();
+            y = event.getY();
             drawer.drawing(x, y);
             lastx = x;
             lasty = y;

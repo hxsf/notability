@@ -180,10 +180,15 @@ public class Drawer {
      *
      */
     public boolean redo() {
+        Line line;
         if (paragraphIndex <= totalLineIndex) {//判断是否有可恢复的段
             if (lineIndex < totalLineIndex) {//判断是否可有可恢复的line
 //                获取最近的line 的对象
-                Line line = note.getParagraph(paragraphIndex).getLine(++lineIndex);
+                if (paragraphIndex < totalLineIndex) {
+                    line = note.getParagraph(paragraphIndex).getLine(++lineIndex);
+                } else {
+                    line = paragraph.getLine(++lineIndex);
+                }
                 for (int i = line.getBitmaps().size() - 1; i > 0; i--) {
                     float endX = line.getPixels().get(i).getX();//获取当前点的坐标
                     float endY = line.getPixels().get(i).getY();
@@ -223,10 +228,16 @@ public class Drawer {
      *
      */
     public boolean undo( ) {
+        Line line;
         if(paragraphIndex>=0){//表示还有段落可以撤销
                 if(lineIndex>=0) {//表示还有笔画可以撤销
 //                    将这个笔画所在的方形区域用画之前的方形区域的颜色覆盖
-                    Line line = note.getParagraph(paragraphIndex).getLine(lineIndex--);
+                    if (paragraphIndex == totalParagraphIndex) {
+                        //表示要撤消的这段是当前正在使用的段落，还没有被写入note中
+                        line = paragraph.getLine(lineIndex--);
+                    } else {
+                        line = note.getParagraph(paragraphIndex).getLine(lineIndex--);
+                    }
                     for (int i = line.getBitmaps().size() - 1; i > 0; i--) {
                         float endX = line.getPixels().get(i).getX();//获取当前点的坐标
                         float endY = line.getPixels().get(i).getY();
@@ -240,9 +251,14 @@ public class Drawer {
                         Log.v("drawEnd", "after undo，line.size=" + paragraph.getLines().size() + "lineIndex"+lineIndex);
                     }
                 } else {
-                    paragraphIndex--;
-                    totalLineIndex = lineIndex = note.getParagraph(paragraphIndex).getLines().size() - 1;
-                    undo();
+                    if ((paragraphIndex - 1) >= 0) {
+                        paragraphIndex--;
+                        totalLineIndex = lineIndex = note.getParagraph(paragraphIndex).getLines().size() - 1;
+                        undo();
+                    } else {
+                        return false;
+                    }
+
                 }
             return true;
         } else

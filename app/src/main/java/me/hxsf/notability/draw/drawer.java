@@ -21,6 +21,7 @@ public class Drawer {
     static Drawer drawer;
     Path path = new Path();
     private  Bitmap bitmap; //位图
+    private  Canvas canvas;//TODO 是否需要定义canvas变量
     private Paint paint;//笔触
     private ImageView imageView; //画板
     private Note note; //存储笔记
@@ -45,7 +46,8 @@ public class Drawer {
         //初始化队列信息
         queue = new LinkedBlockingQueue<BaseLine>();
         this.imageView = imageView;
-        bitmap = Bitmap.createBitmap(imageView.getMaxWidth(), imageView.getMaxHeight(), Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
+        canvas=new Canvas(bitmap);
     }
 
     public static Drawer getDrawer(ImageView imageView, int color, float penSize) {
@@ -163,6 +165,7 @@ public class Drawer {
         drawing(bl.x2, bl.y2);
         path.quadTo(bl.x1, bl.y1, bl.x2, bl.y2);
         canvas.drawPath(path, paint);
+        imageView.setImageBitmap(bitmap);
         path.reset();
         return canvas;
     }
@@ -179,7 +182,7 @@ public class Drawer {
      *              否则表示还有段落可以恢复，段落指针加一，指到要恢复的段落，重新调用redo方法
      *
      */
-    public boolean redo(Canvas canvas) {
+    public boolean redo() {
         if (paragraphIndex <= totalLineIndex) {//判断是否有可恢复的段
             if (lineIndex < totalLineIndex) {//判断是否可有可恢复的line
 //                获取最近的line 的对象
@@ -201,7 +204,7 @@ public class Drawer {
                     paragraphIndex++;
                     totalLineIndex = note.getParagraph(paragraphIndex).getLines().size();
                     lineIndex = -1;
-                    redo(canvas);
+                    redo();
                 }
             }
             return true;
@@ -222,7 +225,7 @@ public class Drawer {
      *              否则表示还有段落可以恢复，段落指针加一，指到要恢复的段落，重新调用redo方法
      *
      */
-    public boolean undo(Canvas canvas) {
+    public boolean undo( ) {
         if(paragraphIndex>=0){//表示还有段落可以撤销
                 if(lineIndex>=0) {//表示还有笔画可以撤销
 //                    将这个笔画所在的方形区域用画之前的方形区域的颜色覆盖
@@ -232,7 +235,6 @@ public class Drawer {
                         float endY = line.getPixels().get(i).getY();
                         float startX = line.getPixels().get(i - 1).getX();//获取上一点的坐标
                         float startY = line.getPixels().get(i - 1).getY();
-//                        TODO  获取 整体的bitmap
                         Bitmap temp = line.setBitmap(bitmap, startX, startY, endX, endY); //截取当前画布内容，为redo 准备
                         canvas.setBitmap(line.getBitmap(i));//重绘
                         line.getBitmaps().set(i, temp);//将被重绘部分的内容保存，以供redo 使用
@@ -243,7 +245,7 @@ public class Drawer {
                 } else {
                     paragraphIndex--;
                     totalLineIndex = lineIndex = note.getParagraph(paragraphIndex).getLines().size() - 1;
-                    undo(canvas);
+                    undo();
                 }
             return true;
         } else

@@ -81,7 +81,8 @@ public class DrawActivity extends AppCompatActivity {
 //            img.post(new Runnable() {
 //                @Override
 //                public void run() {
-                    drawer = Drawer.getDrawer(Color.BLACK, 10f);
+//            TODO  传 ImageView 参数
+                    drawer = Drawer.getDrawer(img,Color.BLACK, 10f);
                     drawer.onNewNote();
 //                }
 //            });
@@ -90,7 +91,6 @@ public class DrawActivity extends AppCompatActivity {
         }
 
         getSupportActionBar().setTitle(a);
-        //TODO 给undo 函数传 canvas 参数
       /*  Button button = (Button) findViewById(R.id.undo);
         button.setOnClickListener(
                 new View.OnClickListener() {

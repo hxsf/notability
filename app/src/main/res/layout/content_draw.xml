@@ -8,7 +8,7 @@
     tools:context="me.hxsf.notability.DrawActivity"
     tools:showIn="@layout/activity_draw">
 
-    <me.hxsf.notability.view.DrawView
+    <ImageView
         android:id="@+id/draw_space"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

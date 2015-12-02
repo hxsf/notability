@@ -7,8 +7,6 @@ import android.graphics.Path;
 import android.util.Log;
 import android.widget.ImageView;
 
-import java.util.concurrent.LinkedBlockingQueue;
-
 import me.hxsf.notability.data.Line;
 import me.hxsf.notability.data.Note;
 import me.hxsf.notability.data.Paragraph;
@@ -30,23 +28,21 @@ public class Drawer {
     private boolean hasAudio; //判断是否有录音，true 时有
     private int paragraphIndex,totalParagraphIndex;//记录note对象中paragraph 数组中的元素个数
     private int lineIndex,totalLineIndex;//记录paragraph对象中line数组中的元素个数
-    private LinkedBlockingQueue<BaseLine> queue;
 
     /**
      //     * @param imageView  画板
      * @param color  笔触颜色
      * @param penSize  笔触粗细
      */
-    private Drawer(ImageView imageView, int color, float penSize) {
-//        //初始化画笔
+    public Drawer(ImageView imageView, int color, float penSize) {
+        //初始化画笔
         setPaint(color, penSize);
         //初始化指针
         paragraphIndex = totalParagraphIndex = 0;
         lineIndex = totalLineIndex = -1;
-        //初始化队列信息
-        queue = new LinkedBlockingQueue<BaseLine>();
         this.imageView = imageView;
         bitmap = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
+        Log.v("w&h", imageView.getWidth() + ",  " + imageView.getHeight());
         canvas=new Canvas(bitmap);
     }
 
@@ -156,18 +152,19 @@ public class Drawer {
         }
     }
 
-    public Canvas draw(Canvas canvas, BaseLine bl) {
+    public void draw(BaseLine bl) {
         if (bl.isstart) {
+            path.reset();
             drawEnd();
             path.moveTo(bl.x1, bl.y1);
         }
-        drawing(bl.x1, bl.y1);
+        ;
+//        drawing(bl.x1, bl.y1);
         drawing(bl.x2, bl.y2);
-        path.quadTo(bl.x1, bl.y1, bl.x2, bl.y2);
+        path.quadTo(bl.x1, bl.y1, (bl.x1 + bl.x2) / 2, (bl.y1 + bl.y2) / 2);
+//        Log.v("path",bl.toString() );
         canvas.drawPath(path, paint);
         imageView.setImageBitmap(bitmap);
-        path.reset();
-        return canvas;
     }
 
     /**

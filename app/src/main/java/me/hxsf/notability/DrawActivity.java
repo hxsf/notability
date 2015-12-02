@@ -9,27 +9,28 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import me.hxsf.notability.draw.BaseLine;
 import me.hxsf.notability.draw.Drawer;
-import me.hxsf.notability.view.DrawView;
 
 public class DrawActivity extends AppCompatActivity {
 
-    DrawView img;
+    ImageView img;
     /*  Canvas canvas;
       Paint paint = new Paint();
       Bitmap bitmap;*/
     Drawer drawer;
+    Drawing drawing;
     float lastx, lasty;
     boolean isstart;
     BaseLine line;
+    LinkedBlockingQueue<BaseLine> bq = new LinkedBlockingQueue();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,31 +48,35 @@ public class DrawActivity extends AppCompatActivity {
 //            }
 //        });
 
-        img = (DrawView) findViewById(R.id.draw_space);
+        img = (ImageView) findViewById(R.id.draw_space);
         img.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.v("s", event.toString());
                 float x = event.getX();
                 float y = event.getY();
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    lastx = x;
-                    lasty = y;
-                    isstart = true;
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        isstart = true;
+                        lastx = x;
+                        lasty = y;
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        line = new BaseLine(isstart, lastx, lasty, x, y);
+                        Log.v("bl_Move", line.toString());
+                        drawer.draw(line);
+                        isstart = false;
+                        lastx = x;
+                        lasty = y;
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        line = new BaseLine(isstart, lastx, lasty, x, y);
+                        Log.v("bl_End ", line.toString());
+                        drawer.draw(line);
+                        isstart = false;
+                        return true;
+                    default:
+                        return false;
                 }
-                if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    line = new BaseLine(isstart, lastx, lasty, x, y);
-                    img.offer(line);
-                    lastx = x;
-                    lasty = y;
-                    isstart = false;
-                }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    line = new BaseLine(isstart, lastx, lasty, x, y);
-                    img.offer(line);
-                    isstart = false;
-                }
-                return true;
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -81,9 +86,6 @@ public class DrawActivity extends AppCompatActivity {
 //            img.post(new Runnable() {
 //                @Override
 //                public void run() {
-//            TODO  传 ImageView 参数
-                    drawer = Drawer.getDrawer(img,Color.BLACK, 10f);
-                    drawer.onNewNote();
 //                }
 //            });
         } else {
@@ -91,7 +93,17 @@ public class DrawActivity extends AppCompatActivity {
         }
 
         getSupportActionBar().setTitle(a);
-      /*  Button button = (Button) findViewById(R.id.undo);
+        img.post(new Runnable() {
+            @Override
+            public void run() {
+                drawer = new Drawer(img, Color.BLACK, 1f);
+                drawer.onNewNote();
+//                drawing = new Drawing(drawer, bq);
+//                drawing.start();
+            }
+        });
+
+        Button button = (Button) findViewById(R.id.undo);
         button.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -99,7 +111,7 @@ public class DrawActivity extends AppCompatActivity {
                         drawer.undo();
                     }
                 }
-        );*/
+        );
     }
 
     /**
@@ -119,4 +131,36 @@ public class DrawActivity extends AppCompatActivity {
     }
 
 
+}
+
+class Drawing extends Thread {
+    private LinkedBlockingQueue<BaseLine> bq;
+    private boolean isrun;
+    private Drawer drawer;
+
+    public Drawing(Drawer drawer, LinkedBlockingQueue<BaseLine> b) {
+        this.drawer = drawer;
+        this.bq = b;
+        isrun = true;
+    }
+
+    public void shut() {
+        isrun = false;
+    }
+
+    @Override
+    public void run() {
+        Log.v("run", isrun + "");
+        while (isrun) {
+            BaseLine bl = bq.poll();
+            Log.v("bl", (bl == null) + "");
+            while (bl != null) {
+                Log.v("bl", bl.toString());
+                drawer.draw(bl);
+                //TODO chenmeng
+
+                bl = bq.poll();
+            }
+        }
+    }
 }

@@ -7,7 +7,7 @@ public class BaseLine {
     public float x1, y1, x2, y2;
     public boolean isstart;
 
-    public BaseLine(boolean isstart, float x1, float x2, float y1, float y2) {
+    public BaseLine(boolean isstart, float x1, float y1, float x2, float y2) {
         this.isstart = isstart;
         this.x1 = x1;
         this.x2 = x2;
@@ -30,6 +30,6 @@ public class BaseLine {
      */
     @Override
     public String toString() {
-        return "{x1='" + x1 + ", y1='" + y1 + ", x2='" + x2 + ", y2='" + y2 + "}";
+        return "{" + isstart + ",\tx1='" + x1 + ",\ty1='" + y1 + ",\tx2='" + x2 + ",\ty2='" + y2 + "}";
     }
 }

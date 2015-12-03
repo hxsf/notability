@@ -17,9 +17,11 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import me.hxsf.notability.data.Note;
 import me.hxsf.notability.draw.BaseLine;
 import me.hxsf.notability.draw.Drawer;
 import me.hxsf.notability.until.Recorder;
+import me.hxsf.notability.until.SaveLoad;
 
 public class DrawActivity extends AppCompatActivity {
 
@@ -178,5 +180,13 @@ public class DrawActivity extends AppCompatActivity {
         return true;
     }
 
+    //    TODO collection 对象的名称和tag 名称
+    public void save() {
+        SaveLoad.save("Notability/C1/" + drawer.getNote().getTitle(), drawer.getNote().getTitle() + ".obj", drawer.getNote());
+    }
+
+    public void load(String noteName) {
+        drawer.onNewNote((Note) SaveLoad.load("Notability/C1/" + noteName + "/" + noteName + ".obj"));
+    }
 
 }

@@ -70,6 +70,12 @@ public class CollectionListActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setupRecyclerView((RecyclerView) findViewById(R.id.collection_list));
+    }
+
     /**
      * Initialize the contents of the Activity's standard options menu.  You
      * should place your menu items in to <var>menu</var>.

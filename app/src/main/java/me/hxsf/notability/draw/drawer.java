@@ -3,6 +3,9 @@ package me.hxsf.notability.draw;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Environment;
@@ -17,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.Timer;
 
 import me.hxsf.notability.data.Line;
 import me.hxsf.notability.data.Note;
@@ -31,7 +35,7 @@ public class Drawer {
     Path path = new Path();
     Handler handler;
     private Bitmap bitmap; //位图
-    private Canvas canvas;//TODO 是否需要定义canvas变量
+    private Canvas canvas;
     private Paint paint;//笔触
     private ImageView imageView; //画板
     private Note note; //存储笔记
@@ -41,25 +45,52 @@ public class Drawer {
 //            TODO to change to timeline
             Paragraph paragraph;
             Line line;
-            for (int i = 0; i < note.getParagraphSize(); i++) {
+            int totalParagraph,totalLine,totalPx;
+            long time1=0l,time2;
+            totalParagraph= note.getParagraphSize();
+            for (int i = 0; i < totalParagraph; i++) {
                 paragraph = note.getParagraph(i);
                 if (paragraph.hasAudio) {//表示该段有音频
-                    for (int j = 0; j < paragraph.getLines().size(); j++) {
+                    totalLine=paragraph.getLines().size();
+                    for (int j = 0; j < totalLine; j++) {
                         line = paragraph.getLine(j);
+                        paint.setColor(line.getColor());
+                        paint.setStrokeWidth(line.getPenSize());
                         path.reset();
                         Pixel p1 = line.getPixel(0);
                         path.moveTo(p1.getX(), p1.getY());
-                        for (int k = 1; k < line.getPixels().size(); k++) {
+                        totalPx=line.getPixels().size();
+                        for (int k = 1; k < totalPx; k++) {
+                            Pixel p2 = line.getPixel(k);
+                            time2=p2.getTimestamp();
+                            path.quadTo(p1.getX(), p1.getY(), (p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
+                            canvas.drawPath(path, paint);
+                            handler.sendEmptyMessage(1);
+                            try {
+                                Thread.sleep(time2-time1);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            p1 = p2;
+                            time1 = time2;
+                        }
+                    }
+                }else{
+                    totalLine=paragraph.getLines().size();
+                    for (int j = 0; j < totalLine; j++) {
+                        line = paragraph.getLine(j);
+                        paint.setColor(line.getColor());
+                        paint.setStrokeWidth(line.getPenSize());
+                        path.reset();
+                        Pixel p1 = line.getPixel(0);
+                        path.moveTo(p1.getX(), p1.getY());
+                        totalPx=line.getPixels().size();
+                        for (int k = 1; k < totalPx; k++) {
                             Pixel p2 = line.getPixel(k);
                             path.quadTo(p1.getX(), p1.getY(), (p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
                             p1 = p2;
                             canvas.drawPath(path, paint);
                             handler.sendEmptyMessage(1);
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
                         }
                     }
                 }
@@ -69,11 +100,8 @@ public class Drawer {
     private Paragraph paragraph; //存储段落
     private Line line; //存储笔画
     private boolean hasAudio; //判断是否有录音，true 时有
-    private int paragraphIndex,totalParagraphIndex;//记录note对象中paragraph 数组中的元素个数
-    private int lineIndex,totalLineIndex;//记录paragraph对象中line数组中的元素个数
     private UndoList<Bitmap> undolist;
     private Stack<Line> redoStack;
-    private long time;
 
     /**
      //     * @param imageView  画板
@@ -83,9 +111,6 @@ public class Drawer {
     public Drawer(final ImageView imageView, int color, float penSize) {
         //初始化画笔
         setPaint(color, penSize);
-        //初始化指针
-        paragraphIndex = totalParagraphIndex = -1;
-        lineIndex = totalLineIndex = -1;
         this.imageView = imageView;
         bitmap = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
         Log.v("w&h", imageView.getWidth() + ",  " + imageView.getHeight());
@@ -212,21 +237,16 @@ public class Drawer {
         if (paragraph != null) {
             note.addParagraph(paragraph);//将上一段没有音频的笔记添加到note对象中
         }
-        totalParagraphIndex = paragraphIndex = note.getParagraphSize();//获取note中paragraph数组的最新长度
         paragraph=new Paragraph(true);//创建一个新的、有音频的paragraph 对象
         hasAudio=true;
     }
 
-    public void setTime(Long time) {
-        this.time = time;
-    }
 
     /**
      * 关闭录音，将上一个有声音的Paragraph 对象添加到note对象中，新建一个无音频的Paragraph 对象
      */
     public void onAudioClose(){
         note.addParagraph(paragraph);//将上一段有音频的笔记添加到note对象中
-        paragraphIndex = totalParagraphIndex = note.getParagraphSize() - 1;//获取note中paragraph数组的最新长度
         paragraph=new Paragraph();//创建一个新的、无音频的paragraph 对象
         hasAudio=false;
     }
@@ -236,7 +256,7 @@ public class Drawer {
      * @param x  x 坐标
      * @param y  y 坐标
      */
-    public void drawing(float x, float y) {
+    public void drawing(float x, float y,long time) {
         Pixel pixel;
         if (hasAudio) {
             pixel = new Pixel(time, x, y);
@@ -270,7 +290,23 @@ public class Drawer {
             drawStart();
             path.moveTo(bl.x1, bl.y1);
         }
-        drawing(bl.x1, bl.y1);
+        drawing(bl.x1, bl.y1,0);
+//        drawing(bl.x2, bl.y2);
+        path.quadTo(bl.x1, bl.y1, (bl.x1 + bl.x2) / 2, (bl.y1 + bl.y2) / 2);
+        canvas.drawPath(path, paint);
+        imageView.setImageBitmap(bitmap);
+        if(bl.isstart==-1) {
+            drawEnd();
+            redoStack.clear();
+        }
+    }
+    public void draw(BaseLine bl,long time) {
+        if (bl.isstart==1) {
+            path.reset();
+            drawStart();
+            path.moveTo(bl.x1, bl.y1);
+        }
+        drawing(bl.x1, bl.y1,time);
 //        drawing(bl.x2, bl.y2);
         path.quadTo(bl.x1, bl.y1, (bl.x1 + bl.x2) / 2, (bl.y1 + bl.y2) / 2);
         canvas.drawPath(path, paint);
@@ -337,9 +373,27 @@ public class Drawer {
     }
 
     public void startShow() {
+        GrayBitmap();
         new Thread(show).start();
     }
+    public void GrayBitmap(){
+        Paint mPaint=new Paint();
+        bitmap=Bitmap.createBitmap(imageView.getWidth(),imageView.getHeight(), Bitmap.Config.ARGB_8888);
+        canvas.setBitmap(bitmap);
 
+//        //创建颜色变换矩阵
+//        ColorMatrix mColorMatrix = new ColorMatrix();
+//        //设置灰度影响范围
+//        mColorMatrix.setSaturation(0);
+//        //创建颜色过滤矩阵
+//        ColorMatrixColorFilter mColorFilter = new ColorMatrixColorFilter(mColorMatrix);
+//        //设置画笔的颜色过滤矩阵
+//        mPaint.setColorFilter(mColorFilter);
+        //使用处理后的画笔绘制图像
+        mPaint.setColor(Color.GRAY);
+//        canvas.drawBitmap(bitmap, 0, 0, mPaint);
+        imageView.setImageBitmap(bitmap);
+    }
 
     private class UndoList<T> {
         private ArrayList<T> list;

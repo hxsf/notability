@@ -21,6 +21,7 @@ import java.util.Date;
 import me.hxsf.notability.data.Note;
 import me.hxsf.notability.draw.BaseLine;
 import me.hxsf.notability.draw.Drawer;
+import me.hxsf.notability.until.Player;
 import me.hxsf.notability.until.Recorder;
 import me.hxsf.notability.until.SaveLoad;
 
@@ -32,22 +33,6 @@ public class DrawActivity extends AppCompatActivity {
     int isstart;
     BaseLine line;
     long time = 0;
-    private boolean isrecording = false;
-    Runnable timer = new Runnable() {
-        @Override
-        public void run() {
-            while (isrecording) {
-                time += 100;
-                drawer.setTime(time);
-                Log.v("timer", "run " + time);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,25 +60,25 @@ public class DrawActivity extends AppCompatActivity {
                 String msg = "";
                 switch (menuItem.getItemId()) {
                     case R.id.nav_audio:
-                        drawer.onAudioClick();
                         msg += "Click audio";
                         if (time == 0) {
-                            isrecording = true;
-                            new Thread(timer).start();
+                            drawer.onAudioClick();
+                            time=System.currentTimeMillis();
                             msg += " start";
-                            Recorder.startRecording("Notability/" + finalA, "1.arm");
+                            Recorder.startRecording("Notability/Default/" + finalA, "1.arm");
                             toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_menu_mic_full);
                         } else {
                             msg += " stop, total " + time + " ms";
                             time = 0;
                             drawer.onAudioClose();
-                            isrecording = false;
                             Recorder.stopRecording();
                             toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_menu_mic);
                         }
                         break;
                     case R.id.nav_play:
+                        Player.play("Notability/" + finalA + "/1.arm");
                         drawer.startShow();
+                        Log.v("AudioPath:","Notability/" + finalA + "/1.arm");
                         break;
                     case R.id.nav_undo:
                         drawer.undo();
@@ -146,7 +131,7 @@ public class DrawActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_MOVE:
                         line = new BaseLine(isstart, lastx, lasty, x, y);
 //                        Log.v("bl_Move", line.toString());
-                        drawer.draw(line);
+                        drawer.draw(line,System.currentTimeMillis()-time);
                         isstart = 0;
                         lastx = x;
                         lasty = y;
@@ -155,7 +140,7 @@ public class DrawActivity extends AppCompatActivity {
 //                        Log.v("bl_End ", line.toString());
                         isstart = -1;
                         line = new BaseLine(isstart, lastx, lasty, x, y);
-                        drawer.draw(line);
+                        drawer.draw(line,System.currentTimeMillis()-time);
                         return true;
                     default:
                         return false;

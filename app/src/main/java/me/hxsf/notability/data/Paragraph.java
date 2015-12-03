@@ -69,20 +69,4 @@ public class Paragraph {
         return lines.get(index);
     }
 
-    /*public boolean redo(){
-        if (nowIndex<lines.size()){
-            lines.get(nowIndex).redo();
-            nowIndex++;
-            return true;
-        }
-        return false;
-    }
-    public boolean undo(){
-        if(nowIndex>=0){
-            lines.get(nowIndex).undo();
-            nowIndex--;
-            return true;
-        }
-        return false;
-    }*/
 }

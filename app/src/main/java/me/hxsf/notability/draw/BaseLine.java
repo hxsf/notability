@@ -5,7 +5,7 @@ package me.hxsf.notability.draw;
  */
 public class BaseLine {
     public float x1, y1, x2, y2;
-    public boolean isstart;
+    public boolean isstart=false;
 
     public BaseLine(boolean isstart, float x1, float y1, float x2, float y2) {
         this.isstart = isstart;

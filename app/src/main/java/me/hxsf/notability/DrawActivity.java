@@ -103,15 +103,20 @@ public class DrawActivity extends AppCompatActivity {
             }
         });
 
-        Button button = (Button) findViewById(R.id.undo);
-        button.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        drawer.undo();
-                    }
+        Button undo = (Button) findViewById(R.id.undo);
+        undo.setOnClickListener( new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    drawer.undo();
                 }
-        );
+        });
+        Button redo=(Button) findViewById(R.id.redo);
+        redo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.redo();
+            }
+        });
     }
 
     /**

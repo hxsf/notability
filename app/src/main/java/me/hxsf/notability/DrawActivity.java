@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,7 +27,7 @@ public class DrawActivity extends AppCompatActivity {
     ImageView img;
     Drawer drawer;
     float lastx, lasty;
-    boolean isstart;
+    int isstart;
     BaseLine line;
     long time = 0;
     private boolean isrecording = false;
@@ -94,7 +93,7 @@ public class DrawActivity extends AppCompatActivity {
                 if (msg.equals("")) {
                     msg = "none";
                 }
-                Toast.makeText(DrawActivity.this, msg, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(DrawActivity.this, msg, Toast.LENGTH_SHORT).show();
                 Log.v("click", msg);
                 return true;
             }
@@ -116,23 +115,23 @@ public class DrawActivity extends AppCompatActivity {
                 float y = event.getY();
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        isstart = true;
+                        isstart = 1;
                         lastx = x;
                         lasty = y;
                         return true;
                     case MotionEvent.ACTION_MOVE:
                         line = new BaseLine(isstart, lastx, lasty, x, y);
-                        Log.v("bl_Move", line.toString());
+//                        Log.v("bl_Move", line.toString());
                         drawer.draw(line);
-                        isstart = false;
+                        isstart = 0;
                         lastx = x;
                         lasty = y;
                         return true;
                     case MotionEvent.ACTION_UP:
+//                        Log.v("bl_End ", line.toString());
+                        isstart = -1;
                         line = new BaseLine(isstart, lastx, lasty, x, y);
-                        Log.v("bl_End ", line.toString());
                         drawer.draw(line);
-                        isstart = false;
                         return true;
                     default:
                         return false;
@@ -153,6 +152,7 @@ public class DrawActivity extends AppCompatActivity {
             public void run() {
                 drawer = new Drawer(img, Color.BLACK, 1f);
                 drawer.onNewNote();
+                Log.v("nn", "new Draw");
             }
         });
 

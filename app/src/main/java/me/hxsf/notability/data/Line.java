@@ -70,7 +70,11 @@ public class Line  implements Serializable {
     }
 
     public Pixel getPixel(int index) {
-        return pixels.get(index);
+        if (index < pixels.size()) {
+            return pixels.get(index);
+        } else {
+            return null;
+        }
     }
 
     public void addPixel(Pixel pixels) {

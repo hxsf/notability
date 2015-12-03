@@ -8,9 +8,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.Stack;
 
 import me.hxsf.notability.data.Line;
 import me.hxsf.notability.data.Note;
@@ -34,13 +32,9 @@ public class Drawer {
     private int paragraphIndex,totalParagraphIndex;//记录note对象中paragraph 数组中的元素个数
     private int lineIndex,totalLineIndex;//记录paragraph对象中line数组中的元素个数
 
+    private UndoList<Bitmap> undolist;
 
-    private Queue<Bitmap> queue;
-    private int front, rear, count;
-
-
-    private List<Bitmap> stack;
-    private List<Line> redoStack;
+    private Stack<Line> redoStack;
 
     /**
      //     * @param imageView  画板
@@ -57,14 +51,8 @@ public class Drawer {
         bitmap = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
         Log.v("w&h", imageView.getWidth() + ",  " + imageView.getHeight());
         canvas=new Canvas(bitmap);
-
-
-        queue = new LinkedList<>();
-        count = 0;
-        front = rear = 0;
-
-        stack = new ArrayList<>();
-        redoStack = new ArrayList<>();
+        undolist = new UndoList<>();
+        redoStack = new Stack<>();
     }
 
     public static Drawer getDrawer(ImageView imageView, int color, float penSize) {
@@ -156,105 +144,112 @@ public class Drawer {
      * 笔画结束，手指抬起,将line 对象添加到paragraph 对象中
      */
     public void drawEnd(){
-
+        Log.v("drawend", "start");
         //添加bitmap 快照
-        if (count < 5) {//队未满
-            stack.add(line.addNowBitmap(bitmap, imageView.getWidth(), imageView.getHeight()));
-            rear++;
-            count++;
-        } else {//队满，循环
-            stack.set((rear) % 5, line.addNowBitmap(bitmap, imageView.getWidth(), imageView.getHeight()));
-            rear = (rear + 1) % 5;
-        }
         paragraph.addLine(line);
+        Log.v("drawend", "finish");
+    }
+    private void drawStart(){
+        Bitmap b1 = Bitmap.createBitmap(bitmap,0,0,imageView.getWidth(),imageView.getHeight());
+        undolist.add(b1);
         line = new Line(paint.getColor(), paint.getStrokeWidth());//初始化一个新的line 对象
     }
 
     public void draw(BaseLine bl) {
-        if (bl.isstart) {
+        if (bl.isstart==1) {
             path.reset();
-            drawEnd();//将上一条线插入到数组中
+            drawStart();
             path.moveTo(bl.x1, bl.y1);
         }
         drawing(bl.x1, bl.y1);
 //        drawing(bl.x2, bl.y2);
         path.quadTo(bl.x1, bl.y1, (bl.x1 + bl.x2) / 2, (bl.y1 + bl.y2) / 2);
-//        Log.v("path",bl.toString() );
         canvas.drawPath(path, paint);
         imageView.setImageBitmap(bitmap);
+        if(bl.isstart==-1) {
+            drawEnd();
+            redoStack.clear();
+        }
     }
 
-    public void draw(BaseLine bl, long time) {
-        if (bl.isstart) {
-            path.reset();
-            drawEnd();//将上一条线插入到数组中
-            path.moveTo(bl.x1, bl.y1);
-        }
-        drawing(bl.x1, bl.y1);
-//        drawing(bl.x2, bl.y2);
-        path.quadTo(bl.x1, bl.y1, (bl.x1 + bl.x2) / 2, (bl.y1 + bl.y2) / 2);
-//        Log.v("path",bl.toString() );
-        canvas.drawPath(path, paint);
-        imageView.setImageBitmap(bitmap);
-    }
 
     /**
      * 向前，恢复操作
      */
     public void redo() {
+        Log.v("redo", "start");
         if (!redoStack.isEmpty()) {
-            line = redoStack.get(redoStack.size() - 1);
+            Log.v("redo", "doing - Stack size = "+redoStack.size());
+            drawStart();
+            line = redoStack.pop();
+            Log.v("redo", "doing - Lines num  = "+line.getPixels().size());
             path.reset();
-            path.moveTo(line.getPixel(0).getX(), line.getPixel(0).getY());
-            for (int i = 1; i < line.getPixels().size(); i++) {
-                Log.v("Redo", " " + i);
-                Log.v("Redo,size", " " + line.getPixels().size());
-                path.quadTo(line.getPixel(i - 1).getX(), line.getPixel(i - 1).getY(),
-                        (line.getPixel(i - 1).getX() + line.getPixel(i).getX()) / 2, (line.getPixel(i - 1).getY() + line.getPixel(i).getY()) / 2);
-
-                canvas.drawPath(path, paint);
-
-                imageView.setImageBitmap(bitmap);
+            Pixel p1 = line.getPixel(0);
+            if (p1 == null){
+                Log.e("redo", "null");
+                return;
             }
+            path.moveTo(p1.getX(), p1.getY());
+            for (int i = 1; i < line.getPixels().size(); i++) {
+                Pixel p2 = line.getPixel(i);
+                path.quadTo(p1.getX(), p1.getY(),(p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
+                p1=p2;
+            }
+            Log.v("redo", "path " + path.toString());
+            canvas.drawPath(path, paint);
+            imageView.setImageBitmap(bitmap);
             drawEnd();
-
-               /*
-
-                if(i==1)
-                    baseLine=new BaseLine(true,line.getPixel(i-1).getX(),line.getPixel(i-1).getY(),
-                                                line.getPixel(i).getX(),  line.getPixel(i).getY());
-                else
-                    baseLine=new BaseLine(false,line.getPixel(i-1).getX(),line.getPixel(i-1).getY(),
-                                                 line.getPixel(i).getX(),line.getPixel(i).getY());
-
-                Log.v("BaseLine",baseLine.toString());
-                draw(baseLine);*/
-
-
-            redoStack.remove(redoStack.size() - 1);
         }
+        Log.v("redo", "finish");
     }
     /**
      * 向后，撤销操作
      */
     public void undo() {
-        if (count != 0) {//队未空
-            bitmap = stack.get((--rear + 5) % 5);//获取上一笔
-            rear = (5 + rear) % 5;//后移
-            count--;
+        if (undolist.hasItem()) {//队未空
+            bitmap = undolist.get();
             //将最后一个line对象取出，放入redoStack 栈中
-            if (!paragraph.getLines().isEmpty()) {
-                redoStack.add(paragraph.getLine(paragraph.getLines().size() - 1));
-                paragraph.getLines().remove(paragraph.getLines().size() - 1);//清除这条line对象
+            ArrayList<Line> lines = paragraph.getLines();
+            if (!lines.isEmpty()) {
+                Line ll = lines.remove(paragraph.getLines().size() - 1);
+                redoStack.push(ll);
+                Log.v("for redo","1 - redoStack.size = "+redoStack.size());
             } else {
-                totalParagraphIndex = note.getParagraphSize() - 1;//paragraph 的位置
-                totalLineIndex = note.getParagraph(totalParagraphIndex).getLines().size() - 1; //paragraph 中line 的位置
-                redoStack.add(note.getParagraph(totalParagraphIndex).getLine(totalLineIndex));
-                note.getParagraph(totalParagraphIndex).getLines().remove(totalLineIndex);
+//                totalParagraphIndex = note.getParagraphSize() - 1;//paragraph 的位置
+                Log.e("for redo","2 - redoStack.size "+redoStack.size());
+//                totalLineIndex = note.getParagraph(totalParagraphIndex).getLines().size() - 1; //paragraph 中line 的位置
+//                redoStack.push(note.getParagraph(totalParagraphIndex).getLine(totalLineIndex));
+//                note.getParagraph(totalParagraphIndex).getLines().remove(totalLineIndex);
             }
             canvas.setBitmap(bitmap);
             imageView.setImageBitmap(bitmap);
         }
 
+    }
+
+    private class UndoList<T> {
+        private ArrayList<T> list;
+        private int p = 0;
+
+        public UndoList() {
+            this.list = new ArrayList<>();
+        }
+
+        public void add(T t){
+            list.add(t);
+            Log.v("undolist.add", "num = "+ list.size());
+            if (list.size()>4){
+                list.remove(0);
+            }
+        }
+        public T get(){
+            T bb = list.remove(list.size()-1);
+            Log.v("undolist.get", "num = "+ list.size());
+            return bb;
+        }
+
+        public boolean hasItem() {
+            return this.list.size()>0?true:false;
+        }
     }
 }

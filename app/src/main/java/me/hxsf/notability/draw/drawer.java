@@ -247,31 +247,6 @@ public class Drawer {
                 Log.v("for redo", "1 - redoStack.size = " + redoStack.size());
             } else {
 //                totalParagraphIndex = note.getParagraphSize() - 1;//paragraph 的位置
-                Log.e("for redo","2 - redoStack.size "+redoStack.size());
-//                totalLineIndex = note.getParagraph(totalParagraphIndex).getLines().size() - 1; //paragraph 中line 的位置
-//                redoStack.push(note.getParagraph(totalParagraphIndex).getLine(totalLineIndex));
-//                note.getParagraph(totalParagraphIndex).getLines().remove(totalLineIndex);
-            }
-            canvas.setBitmap(bitmap);
-            imageView.setImageBitmap(bitmap);
-        }
-
-    }
-
-    /**
-     * 向后，撤销操作
-     */
-    public void undo() {
-        if (undolist.hasItem()) {//队未空
-            bitmap = undolist.get();
-            //将最后一个line对象取出，放入redoStack 栈中
-            ArrayList<Line> lines = paragraph.getLines();
-            if (!lines.isEmpty()) {
-                Line ll = lines.remove(paragraph.getLines().size() - 1);
-                redoStack.push(ll);
-                Log.v("for redo", "1 - redoStack.size = " + redoStack.size());
-            } else {
-//                totalParagraphIndex = note.getParagraphSize() - 1;//paragraph 的位置
                 Log.e("for redo", "2 - redoStack.size " + redoStack.size());
 //                totalLineIndex = note.getParagraph(totalParagraphIndex).getLines().size() - 1; //paragraph 中line 的位置
 //                redoStack.push(note.getParagraph(totalParagraphIndex).getLine(totalLineIndex));

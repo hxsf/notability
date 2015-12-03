@@ -1,5 +1,6 @@
 package me.hxsf.notability.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -7,11 +8,12 @@ import java.util.ArrayList;
  * Paragraoh 类： 存储记录的一个片段
  *         封装了这个片段的录音，构成这个片段的笔画，画布
  */
-public class Paragraph {
+public class Paragraph  implements Serializable {
 //    TODO audio的类型？
     public String audio;
     public ArrayList<Line> lines;
     public boolean hasAudio;
+    private  String audioName;
 
     /**
      * 没有音频的一段

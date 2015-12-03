@@ -7,6 +7,7 @@ import android.graphics.Path;
 import android.util.Log;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +17,7 @@ import me.hxsf.notability.data.Line;
 import me.hxsf.notability.data.Note;
 import me.hxsf.notability.data.Paragraph;
 import me.hxsf.notability.data.Pixel;
+import me.hxsf.notability.until.SaveLoad;
 
 /**
  * Created by chen on 2015/11/28.
@@ -93,7 +95,6 @@ public class Drawer {
     /**
      * 改变笔触颜色
      * @param color 笔触颜色
-     *
      */
     public void changePaint(int color) {
         paint.setColor(color);
@@ -101,7 +102,6 @@ public class Drawer {
 
     /**
      * 改变笔触宽度
-     *
      * @param penSize 笔触粗细
      */
     public void changePaint(float penSize) {
@@ -117,7 +117,16 @@ public class Drawer {
         line = new Line(paint.getColor(), paint.getStrokeWidth());//初始化line 对象
         hasAudio=false;
     }
+    public void onNewNote(Note note){
+       this.note=note;
+    }
 
+   public void save(){
+       note.addParagraph(paragraph);
+   }
+    public Note getNote(){
+        return note;
+    }
     /**
      * 点击录音：将上一个无声音的Paragraph 对象添加到note对象中，新建一个有音频的Paragraph 对象
      * TODO 获取声音
@@ -217,20 +226,6 @@ public class Drawer {
                 imageView.setImageBitmap(bitmap);
             }
             drawEnd();
-
-               /*
-
-                if(i==1)
-                    baseLine=new BaseLine(true,line.getPixel(i-1).getX(),line.getPixel(i-1).getY(),
-                                                line.getPixel(i).getX(),  line.getPixel(i).getY());
-                else
-                    baseLine=new BaseLine(false,line.getPixel(i-1).getX(),line.getPixel(i-1).getY(),
-                                                 line.getPixel(i).getX(),line.getPixel(i).getY());
-
-                Log.v("BaseLine",baseLine.toString());
-                draw(baseLine);*/
-
-
             redoStack.remove(redoStack.size() - 1);
         }
     }
@@ -241,6 +236,7 @@ public class Drawer {
         if (count != 0) {//队未空
             bitmap = stack.get((--rear + 5) % 5);//获取上一笔
             rear = (5 + rear) % 5;//后移
+            stack.remove(rear + 1);
             count--;
             //将最后一个line对象取出，放入redoStack 栈中
             if (!paragraph.getLines().isEmpty()) {
@@ -255,6 +251,6 @@ public class Drawer {
             canvas.setBitmap(bitmap);
             imageView.setImageBitmap(bitmap);
         }
-
     }
+
 }

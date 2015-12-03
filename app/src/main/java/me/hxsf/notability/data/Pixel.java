@@ -1,10 +1,13 @@
 package me.hxsf.notability.data;
 
+import java.io.Serializable;
+
 /**
  * Created by chen on 2015/11/28.
  * Pixel 类:用于封装像素点和绘制该像素点的时间戳以及绘制该像素点之前该点的颜色
  */
-public class Pixel {
+public class Pixel  implements Serializable {
+    private static final long serialVersionUID = 2L;
     private float x;
     private float y;
     private long timestamp;

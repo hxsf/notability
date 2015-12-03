@@ -1,5 +1,6 @@
 package me.hxsf.notability.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -7,10 +8,11 @@ import java.util.ArrayList;
  * Collection  类：存储标签名相同笔记
  *          封装了标签名，文件名，所有有相同标签的笔记
  */
-public class Collection {
-    public String title;
-    public String tag;
-    public ArrayList<Note> notes;
+public class Collection  implements Serializable {
+    private static final long serialVersionUID = 5L;
+    private String title;
+    private String tag;
+    private ArrayList<Note> notes;
 
     /**
      * @param notes 记录内容的集合
@@ -38,18 +40,15 @@ public class Collection {
     }
     public boolean removeNote(int index){
         //TODO 与 Note 类中的 removeParagraph 函数一样不清楚函数类型应定义成什么
-        int length=notes.size();
         notes.remove(index);
-        if (length>notes.size())
-            return true;
-        return false;
+        return true;
     }
 
     /**
-     * changTitle ：修改分类的名字
+     * setTitle ：修改分类的名字
      * @param title 要修改的名字
      */
-    public  void changTitle(String title){
+    public  void setTitle(String title){
         this.title=title;
     }
 
@@ -63,10 +62,10 @@ public class Collection {
     }
 
     /**
-     * changeTag：修改分类
+     * setTag：修改分类
      * @param tag  要替换的标签名
      */
-    public  void changeTag(String tag){
+    public  void setTag(String tag){
         this.tag=tag;
     }
 }

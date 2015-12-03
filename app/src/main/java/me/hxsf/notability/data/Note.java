@@ -1,5 +1,6 @@
 package me.hxsf.notability.data;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,13 +10,13 @@ import java.util.Date;
  * Note 类 ：存储一篇笔记
  *          封装了笔记的 标题，上一次修改的时间（方便 ic_menu_redo）,构成笔记的片段
  */
-public class Note {
+public class Note  implements Serializable {
+    private static final long serialVersionUID = 4L;
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     public String title;
     public Date lastModified;
-    //    TODO paragraph 类可以删除
     public ArrayList<Paragraph> paragraphs;
-    public ArrayList<Line> lines;
+    public String tag;
 
     public Note() {
         title="未命名";
@@ -26,6 +27,12 @@ public class Note {
         this.lastModified = lastModified;
         this.paragraphs = paragraphs;
         this.title = title;
+    }
+    public Note(Date lastModified, ArrayList<Paragraph> paragraphs, String title,String tag) {
+        this.lastModified = lastModified;
+        this.paragraphs = paragraphs;
+        this.title = title;
+        this.tag=tag;
     }
 
     /**
@@ -91,5 +98,13 @@ public class Note {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }

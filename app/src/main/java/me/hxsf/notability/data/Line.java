@@ -3,6 +3,7 @@ package me.hxsf.notability.data;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -10,18 +11,17 @@ import java.util.ArrayList;
  * Line 类：存储笔画
  *      封装了笔触的颜色，粗度，构成这个笔画的所有像素点，画布
  */
-public class Line {
+public class Line  implements Serializable {
+    private static final long serialVersionUID = 3L;
     public boolean hasAudio;
     private int color;
     private  float penSize;
     private ArrayList<Pixel> pixels;
-    private ArrayList<Bitmap> bitmaps;
 
     public  Line(int color,float penSize){
         pixels=new ArrayList<>();
         this.color=color;
         this.penSize=penSize;
-        bitmaps = new ArrayList<>();
         hasAudio = false;
     }
 

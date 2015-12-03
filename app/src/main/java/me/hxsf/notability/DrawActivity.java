@@ -2,6 +2,7 @@ package me.hxsf.notability;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -114,13 +116,19 @@ public class DrawActivity extends AppCompatActivity {
                 return true;
             }
         });
-
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("Navigation", "click");
+                save();
+            }
+        });
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.color_picker);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO change save to colorpick
-                save();
+
             }
         });
 
@@ -162,7 +170,8 @@ public class DrawActivity extends AppCompatActivity {
                     drawer.onNewNote();
                 } else {
                     Note nnn = (Note) SaveLoad.load(notepath);
-                    drawer.onNewNote(nnn);
+                    String png = Environment.getExternalStorageDirectory().getPath() + "/Notability/" + finalA + "/cache.png";
+                    drawer.onNewNote(nnn, png);
                 }
                 Log.v("nn", "new Draw");
             }
@@ -193,15 +202,14 @@ public class DrawActivity extends AppCompatActivity {
 
     //    TODO collection 对象的名称和tag 名称
     public void save() {
-        drawer.saveAll();
+        String path = "Notability/Default/" + drawer.getNote().getTitle();
+        File paths = new File(path);
+        if (!paths.exists()) {
+            paths.mkdirs();
+        }
+        drawer.saveAll(path);
 //        SaveLoad.save("Notability/"+collection.getTitle()+"/" + drawer.getNote().getTitle(), drawer.getNote().getTitle() + ".obj", drawer.getNote());
-        Log.i("save", "Notability/C1/" + drawer.getNote().getTitle() + "/" + "note.obj");
-        SaveLoad.save("Notability/C1/" + drawer.getNote().getTitle(), "note.obj", drawer.getNote());
+        Log.i("save", path + "/" + "note.obj");
+        SaveLoad.save(path, "note.obj", drawer.getNote());
     }
-
-    public void load(String noteName) {
-        drawer.onNewNote((Note) SaveLoad.load("Notability/C1/" + noteName + "/" + noteName + ".obj"));
-    }
-
-
 }

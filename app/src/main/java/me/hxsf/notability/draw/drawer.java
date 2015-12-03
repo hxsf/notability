@@ -1,14 +1,20 @@
 package me.hxsf.notability.draw;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.ImageView;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -145,15 +151,53 @@ public class Drawer {
         hasAudio=false;
     }
 
-    public void onNewNote(Note note){
+    public void onNewNote(Note note, String png) {
+        if ((new File(png)).exists()) {
+            bitmap = BitmapFactory.decodeFile(png).copy(Bitmap.Config.ARGB_8888, true);
+            canvas.setBitmap(bitmap);
+            imageView.setImageBitmap(bitmap);
+        }
         this.note = note;
         paragraph = new Paragraph();
         line = new Line(paint.getColor(), paint.getStrokeWidth());//初始化line 对象
+
     }
 
-    public void saveAll() {
+    public void saveAll(String path) {
         note.addParagraph(paragraph);
-        note.finishBitmap = line.addNowBitmap(bitmap, imageView.getWidth(), imageView.getHeight());
+//        note.finishBitmap = line.addNowBitmap(bitmap, imageView.getWidth(), imageView.getHeight());
+        // save finish cache
+        Log.i("savepng", "保存图片");
+        File f = new File(Environment.getExternalStorageDirectory().getPath() + "/" + path, "cache.png");
+        Log.i("savepng - path", f.getPath());
+        if (f.exists()) {
+            Log.i("savepng", "isesixt");
+            f.delete();
+        }
+        Log.i("savepng", "delete");
+        try {
+            f.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.i("savepng", "createfile");
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(f);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+            Log.i("savepng", "已经保存");
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            Log.i("savepng", "filenotfound");
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            Log.i("savepng", "sth error");
+            e.printStackTrace();
+        }
+        Log.i("savepng ", "exit");
    }
 
     public Note getNote(){

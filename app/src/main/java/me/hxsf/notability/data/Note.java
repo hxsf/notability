@@ -50,20 +50,13 @@ public class Note {
      * 重载：getParagraph：获取最后一个片段
      * @return
      */
-    public Paragraph getParagraph(){
-        return paragraphs.get(paragraphs.size() - 1);
+    public ArrayList getParagraph(){
+        return paragraphs;
     }
 
     public int getParagraphSize(){
         return paragraphs.size();
     }
-
-    public boolean removeParagraph(int index){
-        //TODO 不确定 return 什么值
-        paragraphs.remove(index);
-        return true;
-    }
-
     /**
      * hasAudio：判断整个笔记是否有音频
      * @return

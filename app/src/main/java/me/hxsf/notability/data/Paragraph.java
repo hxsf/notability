@@ -50,7 +50,10 @@ public class Paragraph {
      * @return
      */
     public boolean hasAudio(){
-        hasAudio = audio != null;
+        if (audio==null)
+            hasAudio=false;
+        else
+            hasAudio=true;
         return hasAudio;
     }
     public  void setLines(int index,Line line){
@@ -66,20 +69,4 @@ public class Paragraph {
         return lines.get(index);
     }
 
-    /*public boolean ic_menu_redo(){
-        if (nowIndex<lines.size()){
-            lines.get(nowIndex).ic_menu_redo();
-            nowIndex++;
-            return true;
-        }
-        return false;
-    }
-    public boolean undo(){
-        if(nowIndex>=0){
-            lines.get(nowIndex).undo();
-            nowIndex--;
-            return true;
-        }
-        return false;
-    }*/
 }

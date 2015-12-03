@@ -33,30 +33,22 @@ public class Line {
      * @param endY   终止点纵坐标
      */
     public Bitmap setBitmap(Bitmap bitmap, float startX, float startY, float endX, float endY) {
-        int x = (int) (startX + penSize / 2);//算上笔触宽度之后的起始点横坐标
-        int y = (int) (startY - penSize / 2);//算上笔触宽度之后的起始点纵坐标
-        int width, height;
-        if ((endX - startX) > 0)
-            width = (int) (endX - startX + penSize);//算上笔触宽度之后需要截取位置的宽度
-        else
-            width = (int) (startX - endX + penSize);
-        if ((endY - startY) > 0)
-            height = (int) (endY - startY + penSize);//算上笔触宽度之后需要截取位置的高度
-        else
-            height = (int) (startY - endY + penSize);
-
+        float x,y, width,height;
+        x=((endX>startX)?startX:endX)-penSize/2;
+        y=((endY>startY)?startY:endY)-penSize/2;
+        width=((endX>startX)?(endX-startX):(startX-endX))+penSize;
+        height=((endY>startY)?(endY-startY):(startY-endY))+penSize;
         Log.v("test", "x:" + x + "   y=" + y + "   w=" + width + "   H=" + height);
-        return Bitmap.createBitmap(bitmap, x, y, width, height);
+        return Bitmap.createBitmap(bitmap,(int)x, (int)y, (int)width, (int)height);
     }
 
-    public ArrayList<Bitmap> getBitmaps() {
-        return bitmaps;
-    }
 
-    public Bitmap getBitmap(int index) {
-        return bitmaps.get(index);
+    public Bitmap addNowBitmap(Bitmap bitmap,int width,int height){
+        return Bitmap.createBitmap(bitmap,0,0,width,height);
     }
-
+    /*public  Bitmap getNowBitmap(){
+        return nowBitmap;
+    }*/
     public float getPenSize() {
         return penSize;
     }
@@ -85,16 +77,4 @@ public class Line {
         this.pixels.add(pixels);
     }
 
-   /* public void ic_menu_redo(){
-        paint.setColor(color);
-        for (int i=0;i<pixels.size()-1;i++){
-            canvas.drawLine(pixels.get(i).getX(),pixels.get(i).getY(),pixels.get(i+1).getX(),pixels.get(i+1).getY(),paint);
-        }
-    }
-    public void undo(){
-        for (int i=0;i<pixels.size()-1;i++){
-            paint.setColor(pixels.get(i).getLastcolor());
-            canvas.drawLine(pixels.get(i).getX(),pixels.get(i).getY(),pixels.get(i+1).getX(),pixels.get(i+1).getY(),paint);
-        }
-    }*/
 }

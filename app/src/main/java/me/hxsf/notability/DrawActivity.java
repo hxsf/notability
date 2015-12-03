@@ -81,6 +81,7 @@ public class DrawActivity extends AppCompatActivity {
                         msg += "Click undo";
                         break;
                     case R.id.nav_redo:
+                        drawer.redo();
                         msg += "Click ic_menu_redo";
                         break;
                     case R.id.nav_share:

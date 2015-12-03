@@ -45,14 +45,33 @@ public class DrawActivity extends AppCompatActivity {
             }
         }
     };
-//    LinkedBlockingQueue<BaseLine> bq = new LinkedBlockingQueue();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
+
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        String a = getIntent().getStringExtra("title");
+        if (a.equals("")) {
+            a = "未命名 " + ((new SimpleDateFormat("yyyy-MM-dd hh:mm")).format(new Date()));
+        } else {
+            Note note = (Note) SaveLoad.load("Notability/" + a + "note.obj");
+        }
+
+        getSupportActionBar().setTitle(a);
+        img.post(new Runnable() {
+            @Override
+            public void run() {
+                drawer = new Drawer(img, Color.BLACK, 1f);
+                drawer.onNewNote();
+                Log.v("nn", "new Draw");
+            }
+        });
         final Toolbar toolbar = (Toolbar) findViewById(R.id.drawtoolbar);
         setSupportActionBar(toolbar);
+        final String finalA = a;
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -64,7 +83,7 @@ public class DrawActivity extends AppCompatActivity {
                             isrecording = true;
                             new Thread(timer).start();
                             msg += " start";
-                            Recorder.startRecording("Notability/C1/N1", "1.arm");
+                            Recorder.startRecording("Notability/" + finalA, "1.arm");
                             toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_menu_mic_full);
                         } else {
                             msg += " stop, total " + time + " ms";
@@ -136,23 +155,6 @@ public class DrawActivity extends AppCompatActivity {
                     default:
                         return false;
                 }
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        String a = getIntent().getStringExtra("title");
-        if (a.equals("")) {
-            a = "未命名 " + ((new SimpleDateFormat("yyyy-MM-dd hh:mm")).format(new Date()));
-        } else {
-            //TODO read file/database to get data;
-        }
-
-        getSupportActionBar().setTitle(a);
-        img.post(new Runnable() {
-            @Override
-            public void run() {
-                drawer = new Drawer(img, Color.BLACK, 1f);
-                drawer.onNewNote();
-                Log.v("nn", "new Draw");
             }
         });
 

@@ -13,15 +13,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#fff"/>
-    <Button
-        android:id="@+id/undo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="后退" />
-    <Button
-        android:id="@+id/redo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="恢复"
-        android:layout_alignParentRight="true"/>
 </RelativeLayout>

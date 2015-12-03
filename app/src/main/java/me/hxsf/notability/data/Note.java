@@ -1,5 +1,6 @@
 package me.hxsf.notability.data;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,12 +8,15 @@ import java.util.Date;
 /**
  * Created by chen on 2015/11/28.
  * Note 类 ：存储一篇笔记
- *          封装了笔记的 标题，上一次修改的时间（方便 redo）,构成笔记的片段
+ *          封装了笔记的 标题，上一次修改的时间（方便 ic_menu_redo）,构成笔记的片段
  */
-public class Note {
+public class Note  implements Serializable {
+    private static final long serialVersionUID = 4L;
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     public String title;
     public Date lastModified;
     public ArrayList<Paragraph> paragraphs;
+    public String tag;
 
     public Note() {
         title="未命名";
@@ -23,6 +27,12 @@ public class Note {
         this.lastModified = lastModified;
         this.paragraphs = paragraphs;
         this.title = title;
+    }
+    public Note(Date lastModified, ArrayList<Paragraph> paragraphs, String title,String tag) {
+        this.lastModified = lastModified;
+        this.paragraphs = paragraphs;
+        this.title = title;
+        this.tag=tag;
     }
 
     /**
@@ -47,18 +57,13 @@ public class Note {
      * 重载：getParagraph：获取最后一个片段
      * @return
      */
-    public Paragraph getParagraph(){
-        return paragraphs.get(paragraphs.size() - 1);
+    public ArrayList getParagraph(){
+        return paragraphs;
     }
+
     public int getParagraphSize(){
         return paragraphs.size();
     }
-    public boolean removeParagraph(int index){
-        //TODO 不确定 return 什么值
-        paragraphs.remove(index);
-        return true;
-    }
-
     /**
      * hasAudio：判断整个笔记是否有音频
      * @return
@@ -87,12 +92,19 @@ public class Note {
         paragraphs.set(index, paragraph);
     }
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     public String getLastModified() {
         return sdf.format(lastModified);
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }

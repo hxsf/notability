@@ -4,43 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".DrawActivity">
 
-    <group>
-        <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            app:showAsAction="always"
-            android:title="Import" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            app:showAsAction="always"
-            android:title="Gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            app:showAsAction="always"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            app:showAsAction="always"
-            android:title="Tools" />
-    </group>
-
     <item
-        android:title="Communicate"
+        android:id="@+id/nav_audio"
+        android:icon="@drawable/ic_menu_mic"
+        android:title="Record"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/nav_play"
+        android:icon="@android:drawable/ic_media_play"
+        android:title="Play"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/nav_undo"
+        android:icon="@drawable/ic_menu_undo"
+        android:title="Undo"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/nav_redo"
+        android:icon="@drawable/ic_menu_redo"
+        android:title="Redo"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/nav_share"
         android:icon="@drawable/ic_menu_share"
-        app:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
+        android:title="Share"
+        app:showAsAction="always" />
 
 </menu>

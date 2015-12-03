@@ -1,9 +1,9 @@
 package me.hxsf.notability.data;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -11,23 +11,44 @@ import java.util.ArrayList;
  * Line 类：存储笔画
  *      封装了笔触的颜色，粗度，构成这个笔画的所有像素点，画布
  */
-public class Line {
+public class Line  implements Serializable {
+    private static final long serialVersionUID = 3L;
+    public boolean hasAudio;
     private int color;
     private  float penSize;
     private ArrayList<Pixel> pixels;
-    Bitmap lastArea;
+
     public  Line(int color,float penSize){
         pixels=new ArrayList<>();
         this.color=color;
         this.penSize=penSize;
+        hasAudio = false;
     }
-//    TODO 以 bitmap 存一块像素点
-    public void setLastArea(float startX,float startY){
-        lastArea=Bitmap.createBitmap((int)(startX+(penSize+1)/2),(int)(startY+(penSize+1)/2), Bitmap.Config.ARGB_8888);
+
+    /**
+     * @param bitmap 原画布
+     * @param startX 起始点横坐标
+     * @param startY 起始点纵坐标
+     * @param endX   终止点横坐标
+     * @param endY   终止点纵坐标
+     */
+    public Bitmap setBitmap(Bitmap bitmap, float startX, float startY, float endX, float endY) {
+        float x,y, width,height;
+        x=((endX>startX)?startX:endX)-penSize/2;
+        y=((endY>startY)?startY:endY)-penSize/2;
+        width=((endX>startX)?(endX-startX):(startX-endX))+penSize;
+        height=((endY>startY)?(endY-startY):(startY-endY))+penSize;
+        Log.v("test", "x:" + x + "   y=" + y + "   w=" + width + "   H=" + height);
+        return Bitmap.createBitmap(bitmap,(int)x, (int)y, (int)width, (int)height);
     }
-    public  void setLastArea(float startX,float startY,float endX,float endY){
-        lastArea=Bitmap.createBitmap((int)(endX-startX+penSize),(int)(endY-startY+penSize), Bitmap.Config.ARGB_8888);
+
+
+    public Bitmap addNowBitmap(Bitmap bitmap,int width,int height){
+        return Bitmap.createBitmap(bitmap,0,0,width,height);
     }
+    /*public  Bitmap getNowBitmap(){
+        return nowBitmap;
+    }*/
     public float getPenSize() {
         return penSize;
     }
@@ -48,20 +69,16 @@ public class Line {
         return pixels;
     }
 
+    public Pixel getPixel(int index) {
+        if (index < pixels.size()) {
+            return pixels.get(index);
+        } else {
+            return null;
+        }
+    }
+
     public void addPixel(Pixel pixels) {
         this.pixels.add(pixels);
     }
 
-   /* public void redo(){
-        paint.setColor(color);
-        for (int i=0;i<pixels.size()-1;i++){
-            canvas.drawLine(pixels.get(i).getX(),pixels.get(i).getY(),pixels.get(i+1).getX(),pixels.get(i+1).getY(),paint);
-        }
-    }
-    public void undo(){
-        for (int i=0;i<pixels.size()-1;i++){
-            paint.setColor(pixels.get(i).getLastcolor());
-            canvas.drawLine(pixels.get(i).getX(),pixels.get(i).getY(),pixels.get(i+1).getX(),pixels.get(i+1).getY(),paint);
-        }
-    }*/
 }

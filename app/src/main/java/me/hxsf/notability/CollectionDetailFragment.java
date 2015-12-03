@@ -2,18 +2,19 @@ package me.hxsf.notability;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -60,7 +61,7 @@ public class CollectionDetailFragment extends Fragment {
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
+                appBarLayout.setTitle(getArguments().getString(ARG_ITEM_ID));
             }
         }
     }
@@ -72,9 +73,11 @@ public class CollectionDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-//            ((TextView) rootView.findViewById(R.id.collection_detail)).setText(mItem.details);
-            for (int i=0;i< Integer.parseInt(getArguments().getString(ARG_ITEM_ID));i++){
-                noteArrayList.add(new Note(new Date(),null, "Note "+i));
+            File file = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + getArguments().getString(ARG_ITEM_ID));
+            for (File dir : file.listFiles()) {
+                if (dir.isDirectory()) {
+                    noteArrayList.add(new Note(new Date(), null, dir.getName()));
+                }
             }
             NoteListViewAdapter noteListViewAdapter = new NoteListViewAdapter(noteArrayList, getActivity());
             ListView listView = (ListView) rootView;
@@ -85,8 +88,9 @@ public class CollectionDetailFragment extends Fragment {
                     Log.v("s",position+"");
 //                    final LinearLayout hide = (LinearLayout)view.findViewById(R.id.note);
                     Intent intent = new Intent(getActivity(), DrawActivity.class);
-                    intent.putExtra("title", ((TextView)view.findViewById(R.id.note_title)).getText());
-                    startActivity(intent);                }
+                    intent.putExtra("title", getArguments().getString(ARG_ITEM_ID) + "/" + ((TextView) view.findViewById(R.id.note_title)).getText());
+                    startActivity(intent);
+                }
             });
         }
 

@@ -3,6 +3,7 @@ package me.hxsf.notability;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -10,11 +11,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.List;
 
 import me.hxsf.notability.dummy.DummyContent;
@@ -42,7 +43,7 @@ public class CollectionListActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle(getTitle());
+        toolbar.inflateMenu(R.menu.main);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -97,12 +98,20 @@ public class CollectionListActivity extends AppCompatActivity {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_activity_draw, menu);
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.menu_activity_draw, menu);
         return true;
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability");
+        for (File dir : file.listFiles()) {
+            if (dir.isDirectory()) {
+                DummyContent.addItem(new DummyContent.DummyItem(dir.getName(), "分类", ""));
+            }
+        }
+
+
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
     }
 
@@ -110,6 +119,7 @@ public class CollectionListActivity extends AppCompatActivity {
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final List<DummyContent.DummyItem> mValues;
+        //TODO read collects
 
         public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
             mValues = items;

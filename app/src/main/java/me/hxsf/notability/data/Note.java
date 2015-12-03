@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Created by chen on 2015/11/28.
  * Note 类 ：存储一篇笔记
- *          封装了笔记的 标题，上一次修改的时间（方便 redo）,构成笔记的片段
+ *          封装了笔记的 标题，上一次修改的时间（方便 ic_menu_redo）,构成笔记的片段
  */
 public class Note {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");

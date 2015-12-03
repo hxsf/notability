@@ -18,13 +18,13 @@ import me.hxsf.notability.data.Pixel;
 public class Drawer {
     static Drawer drawer;
     Path path = new Path();
-    private  Bitmap bitmap; //位图
-    private  Canvas canvas;//TODO 是否需要定义canvas变量
+    private Bitmap bitmap; //位图
+    private Canvas canvas;//TODO 是否需要定义canvas变量
     private Paint paint;//笔触
     private ImageView imageView; //画板
     private Note note; //存储笔记
-    private  Paragraph paragraph; //存储段落
-    private  Line line; //存储笔画
+    private Paragraph paragraph; //存储段落
+    private Line line; //存储笔画
     private boolean hasAudio; //判断是否有录音，true 时有
     private int paragraphIndex,totalParagraphIndex;//记录note对象中paragraph 数组中的元素个数
     private int lineIndex,totalLineIndex;//记录paragraph对象中line数组中的元素个数
@@ -158,8 +158,7 @@ public class Drawer {
             drawEnd();
             path.moveTo(bl.x1, bl.y1);
         }
-        ;
-//        drawing(bl.x1, bl.y1);
+        //        drawing(bl.x1, bl.y1);
         drawing(bl.x2, bl.y2);
         path.quadTo(bl.x1, bl.y1, (bl.x1 + bl.x2) / 2, (bl.y1 + bl.y2) / 2);
 //        Log.v("path",bl.toString() );

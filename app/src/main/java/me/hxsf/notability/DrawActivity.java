@@ -2,51 +2,77 @@ package me.hxsf.notability;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import me.hxsf.notability.draw.BaseLine;
 import me.hxsf.notability.draw.Drawer;
+import me.hxsf.notability.until.SaveLoad;
 
 public class DrawActivity extends AppCompatActivity {
 
     ImageView img;
-    /*  Canvas canvas;
-      Paint paint = new Paint();
-      Bitmap bitmap;*/
     Drawer drawer;
-    Drawing drawing;
     float lastx, lasty;
     boolean isstart;
     BaseLine line;
-    LinkedBlockingQueue<BaseLine> bq = new LinkedBlockingQueue();
+//    LinkedBlockingQueue<BaseLine> bq = new LinkedBlockingQueue();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.drawtoolbar);
         setSupportActionBar(toolbar);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                String msg = "";
+                switch (menuItem.getItemId()) {
+                    case R.id.nav_audio:
+                        msg += "Click audio";
+                        toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_menu_mic_full);
+                        break;
+                    case R.id.nav_undo:
+                        drawer.undo();
+                        msg += "Click undo";
+                        break;
+                    case R.id.nav_redo:
+                        msg += "Click ic_menu_redo";
+                        break;
+                    case R.id.nav_share:
+                        msg += "Click share";
+                        break;
+                }
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+                if (msg.equals("")) {
+                    msg = "none";
+                }
+                Toast.makeText(DrawActivity.this, msg, Toast.LENGTH_SHORT).show();
+                Log.v("click", msg);
+                return true;
+            }
+        });
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.color_picker);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         img = (ImageView) findViewById(R.id.draw_space);
         img.setOnTouchListener(new View.OnTouchListener() {
@@ -83,11 +109,6 @@ public class DrawActivity extends AppCompatActivity {
         String a = getIntent().getStringExtra("title");
         if (a.equals("")) {
             a = "未命名 " + ((new SimpleDateFormat("yyyy-MM-dd hh:mm")).format(new Date()));
-//            img.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                }
-//            });
         } else {
             //TODO read file/database to get data;
         }
@@ -98,20 +119,15 @@ public class DrawActivity extends AppCompatActivity {
             public void run() {
                 drawer = new Drawer(img, Color.BLACK, 1f);
                 drawer.onNewNote();
-//                drawing = new Drawing(drawer, bq);
-//                drawing.start();
             }
         });
 
-        Button button = (Button) findViewById(R.id.undo);
-        button.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        drawer.undo();
-                    }
-                }
-        );
+        /*TEST*/
+
+//        BaseLine b = new BaseLine(true, 1, 2, 3, 4);
+//        SaveLoad.save("Notability/C1/N2", "1.obj", b);
+        BaseLine b = (BaseLine) SaveLoad.load("Notability/C1/N2/1.obj");
+        Log.v("sss", b.toString());
     }
 
     /**
@@ -131,36 +147,4 @@ public class DrawActivity extends AppCompatActivity {
     }
 
 
-}
-
-class Drawing extends Thread {
-    private LinkedBlockingQueue<BaseLine> bq;
-    private boolean isrun;
-    private Drawer drawer;
-
-    public Drawing(Drawer drawer, LinkedBlockingQueue<BaseLine> b) {
-        this.drawer = drawer;
-        this.bq = b;
-        isrun = true;
-    }
-
-    public void shut() {
-        isrun = false;
-    }
-
-    @Override
-    public void run() {
-        Log.v("run", isrun + "");
-        while (isrun) {
-            BaseLine bl = bq.poll();
-            Log.v("bl", (bl == null) + "");
-            while (bl != null) {
-                Log.v("bl", bl.toString());
-                drawer.draw(bl);
-                //TODO chenmeng
-
-                bl = bq.poll();
-            }
-        }
-    }
 }

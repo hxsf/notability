@@ -1,9 +1,12 @@
 package me.hxsf.notability.draw;
 
+import java.io.Serializable;
+
 /**
  * Created by hxsf on 15－12－01.
  */
-public class BaseLine {
+public class BaseLine implements Serializable {
+    private static final long serialVersionUID = 1L;
     public float x1, y1, x2, y2;
     public boolean isstart;
 

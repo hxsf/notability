@@ -85,7 +85,7 @@ public class Line {
         this.pixels.add(pixels);
     }
 
-   /* public void redo(){
+   /* public void ic_menu_redo(){
         paint.setColor(color);
         for (int i=0;i<pixels.size()-1;i++){
             canvas.drawLine(pixels.get(i).getX(),pixels.get(i).getY(),pixels.get(i+1).getX(),pixels.get(i+1).getY(),paint);

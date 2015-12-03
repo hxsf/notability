@@ -2,7 +2,9 @@ package me.hxsf.notability.until;
 
 
 import android.media.MediaRecorder;
+import android.os.Environment;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -10,13 +12,18 @@ import java.io.IOException;
  */
 public class Recorder {
 
-    MediaRecorder mRecorder;
+    static MediaRecorder mRecorder;
 
-    public void startRecording(String fileName) {
-        String mFileName = fileName;
+    static public void startRecording(String path, String fileName) {
+        String dir = Environment.getExternalStorageDirectory().getPath() + "/" + path;
+        File fdir = new File(dir);
+        if (!fdir.exists()) {
+            fdir.mkdirs();
+        }
+        String mFileName = dir + "/" + fileName;
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);//音频来源
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);//输出格式
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);//输出格式
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);//编码格式
         mRecorder.setOutputFile(mFileName);//输出路径
         try {
@@ -27,7 +34,7 @@ public class Recorder {
         mRecorder.start();
     }
 
-    public void stopRecording() {
+    static public void stopRecording() {
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;

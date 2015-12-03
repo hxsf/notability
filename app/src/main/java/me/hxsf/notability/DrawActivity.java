@@ -19,6 +19,7 @@ import java.util.Date;
 
 import me.hxsf.notability.draw.BaseLine;
 import me.hxsf.notability.draw.Drawer;
+import me.hxsf.notability.until.Recorder;
 
 public class DrawActivity extends AppCompatActivity {
 
@@ -27,6 +28,22 @@ public class DrawActivity extends AppCompatActivity {
     float lastx, lasty;
     boolean isstart;
     BaseLine line;
+    long time = 0;
+    private boolean isrecording = false;
+    Runnable timer = new Runnable() {
+        @Override
+        public void run() {
+            while (isrecording) {
+                time += 100;
+                Log.v("timer", "run " + time);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
 //    LinkedBlockingQueue<BaseLine> bq = new LinkedBlockingQueue();
 
     @Override
@@ -42,7 +59,22 @@ public class DrawActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
                     case R.id.nav_audio:
                         msg += "Click audio";
-                        toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_menu_mic_full);
+                        if (time == 0) {
+                            isrecording = true;
+                            new Thread(timer).start();
+                            msg += " start";
+                            Recorder.startRecording("Notability/C1/N1", "1.arm");
+                            toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_menu_mic_full);
+                        } else {
+                            msg += " stop, total " + time + " ms";
+                            time = 0;
+                            isrecording = false;
+                            Recorder.stopRecording();
+                            toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_menu_mic);
+                        }
+                        break;
+                    case R.id.nav_play:
+
                         break;
                     case R.id.nav_undo:
                         drawer.undo();

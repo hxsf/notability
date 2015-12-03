@@ -7,19 +7,23 @@
     <item
         android:id="@+id/nav_audio"
         android:icon="@drawable/ic_menu_mic"
-        android:title="Import"
+        android:title="Record"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/nav_play"
+        android:icon="@android:drawable/ic_media_play"
+        android:title="Play"
         app:showAsAction="always" />
     <item
         android:id="@+id/nav_undo"
         android:icon="@drawable/ic_menu_undo"
-        android:title="Slideshow"
+        android:title="Undo"
         app:showAsAction="always" />
     <item
         android:id="@+id/nav_redo"
         android:icon="@drawable/ic_menu_redo"
-        android:title="Tools"
+        android:title="Redo"
         app:showAsAction="always" />
-
     <item
         android:id="@+id/nav_share"
         android:icon="@drawable/ic_menu_share"

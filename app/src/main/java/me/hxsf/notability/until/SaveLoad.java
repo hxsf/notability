@@ -18,7 +18,7 @@ public class SaveLoad {
         ObjectOutputStream oos = null;
         File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/" + path);
         if (!dir.exists()) {
-            System.out.println(dir.mkdirs() + "");
+            dir.mkdirs();
         }
         File file = new File(dir, filename);
         try {

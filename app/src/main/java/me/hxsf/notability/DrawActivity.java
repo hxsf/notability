@@ -19,7 +19,6 @@ import java.util.Date;
 
 import me.hxsf.notability.draw.BaseLine;
 import me.hxsf.notability.draw.Drawer;
-import me.hxsf.notability.until.SaveLoad;
 
 public class DrawActivity extends AppCompatActivity {
 
@@ -126,8 +125,8 @@ public class DrawActivity extends AppCompatActivity {
 
 //        BaseLine b = new BaseLine(true, 1, 2, 3, 4);
 //        SaveLoad.save("Notability/C1/N2", "1.obj", b);
-        BaseLine b = (BaseLine) SaveLoad.load("Notability/C1/N2/1.obj");
-        Log.v("sss", b.toString());
+//        BaseLine b = (BaseLine) SaveLoad.load("Notability/C1/N2/1.obj");
+//        Log.v("sss", b.toString());
     }
 
     /**

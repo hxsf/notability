@@ -45,20 +45,16 @@ public class Collection  implements Serializable {
     }
 
     /**
-     * setTitle ：修改分类的名字
-     * @param title 要修改的名字
-     */
-    public  void setTitle(String title){
-        this.title=title;
-    }
-
-    /**
      * changeNote：更换笔记
      * @param index 被更新的笔记的位置
      * @param note 要更换的笔记
      */
     public void changeNote(int index,Note note){
-        notes.set(index,note);
+        notes.set(index, note);
+    }
+
+    public String getTag() {
+        return tag;
     }
 
     /**
@@ -67,5 +63,18 @@ public class Collection  implements Serializable {
      */
     public  void setTag(String tag){
         this.tag=tag;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * setTitle ：修改分类的名字
+     *
+     * @param title 要修改的名字
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

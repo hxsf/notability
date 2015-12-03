@@ -42,22 +42,6 @@ public class Paragraph  implements Serializable {
         this.lines = lines;
 
     }
-    /**
-     * @return
-     */
-    public boolean draw(){
-        return true;
-    }
-    /**
-     * @return
-     */
-    public boolean hasAudio(){
-        if (audio==null)
-            hasAudio=false;
-        else
-            hasAudio=true;
-        return hasAudio;
-    }
     public  void setLines(int index,Line line){
         lines.set(index,line);
     }

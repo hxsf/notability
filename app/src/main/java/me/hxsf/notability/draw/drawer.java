@@ -4,10 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.widget.ImageView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -15,7 +16,6 @@ import me.hxsf.notability.data.Line;
 import me.hxsf.notability.data.Note;
 import me.hxsf.notability.data.Paragraph;
 import me.hxsf.notability.data.Pixel;
-import me.hxsf.notability.until.SaveLoad;
 
 /**
  * Created by chen on 2015/11/28.
@@ -33,17 +33,20 @@ public class Drawer {
     private boolean hasAudio; //判断是否有录音，true 时有
     private int paragraphIndex,totalParagraphIndex;//记录note对象中paragraph 数组中的元素个数
     private int lineIndex,totalLineIndex;//记录paragraph对象中line数组中的元素个数
-
+    Handler handler;
     private UndoList<Bitmap> undolist;
 
     private Stack<Line> redoStack;
+
+    private long time;
+
 
     /**
      //     * @param imageView  画板
      * @param color  笔触颜色
      * @param penSize  笔触粗细
      */
-    public Drawer(ImageView imageView, int color, float penSize) {
+    public Drawer(final ImageView imageView, int color, float penSize) {
         //初始化画笔
         setPaint(color, penSize);
         //初始化指针
@@ -55,6 +58,14 @@ public class Drawer {
         canvas=new Canvas(bitmap);
         undolist = new UndoList<>();
         redoStack = new Stack<>();
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                imageView.setImageBitmap(bitmap);
+            }
+        };
+
     }
 
     public static Drawer getDrawer(ImageView imageView, int color, float penSize) {
@@ -106,10 +117,12 @@ public class Drawer {
         hasAudio=false;
     }
     public void onNewNote(Note note){
-       this.note=note;
+        this.note = note;
+        paragraph = new Paragraph();
+        line = new Line(paint.getColor(), paint.getStrokeWidth());//初始化line 对象
     }
 
-   public void save(){
+    public void saveAll() {
        note.addParagraph(paragraph);
    }
     public Note getNote(){
@@ -128,6 +141,9 @@ public class Drawer {
         hasAudio=true;
     }
 
+    public void setTime(Long time) {
+        this.time = time;
+    }
     /**
      * 关闭录音，将上一个有声音的Paragraph 对象添加到note对象中，新建一个无音频的Paragraph 对象
      */
@@ -145,8 +161,14 @@ public class Drawer {
      * @param y  y 坐标
      */
     public void drawing(float x, float y) {
-        Pixel pixel = new Pixel(x, y);
+        Pixel pixel;
+        if (hasAudio) {
+            pixel = new Pixel(time, x, y);
+        } else {
+            pixel = new Pixel(x, y);
+        }
         line.addPixel(pixel); //初始化一个新的像素点对象并添加到 line 对象中
+        Log.v("time", "X:" + pixel.getX() + "\t Y" + pixel.getY() + "\t time:" + pixel.getTimestamp());
     }
 
     /**
@@ -222,7 +244,7 @@ public class Drawer {
             if (!lines.isEmpty()) {
                 Line ll = lines.remove(paragraph.getLines().size() - 1);
                 redoStack.push(ll);
-                Log.v("for redo","1 - redoStack.size = "+redoStack.size());
+                Log.v("for redo", "1 - redoStack.size = " + redoStack.size());
             } else {
 //                totalParagraphIndex = note.getParagraphSize() - 1;//paragraph 的位置
                 Log.e("for redo","2 - redoStack.size "+redoStack.size());
@@ -235,6 +257,69 @@ public class Drawer {
         }
 
     }
+
+    /**
+     * 向后，撤销操作
+     */
+    public void undo() {
+        if (undolist.hasItem()) {//队未空
+            bitmap = undolist.get();
+            //将最后一个line对象取出，放入redoStack 栈中
+            ArrayList<Line> lines = paragraph.getLines();
+            if (!lines.isEmpty()) {
+                Line ll = lines.remove(paragraph.getLines().size() - 1);
+                redoStack.push(ll);
+                Log.v("for redo", "1 - redoStack.size = " + redoStack.size());
+            } else {
+//                totalParagraphIndex = note.getParagraphSize() - 1;//paragraph 的位置
+                Log.e("for redo", "2 - redoStack.size " + redoStack.size());
+//                totalLineIndex = note.getParagraph(totalParagraphIndex).getLines().size() - 1; //paragraph 中line 的位置
+//                redoStack.push(note.getParagraph(totalParagraphIndex).getLine(totalLineIndex));
+//                note.getParagraph(totalParagraphIndex).getLines().remove(totalLineIndex);
+            }
+            canvas.setBitmap(bitmap);
+            imageView.setImageBitmap(bitmap);
+        }
+
+    }
+
+    Runnable show = new Runnable() {
+        @Override
+        public void run() {
+//            TODO to change to timeline
+            Paragraph paragraph;
+            Line line;
+            for (int i = 0; i < note.getParagraphSize(); i++) {
+                paragraph = note.getParagraph(i);
+                if (!paragraph.hasAudio) {//表示该段有音频
+                    for (int j = 0; j < paragraph.getLines().size(); j++) {
+                        line = paragraph.getLine(j);
+                        path.reset();
+                        Pixel p1 = line.getPixel(0);
+                        path.moveTo(p1.getX(), p1.getY());
+                        for (int k = 1; k < line.getPixels().size(); k++) {
+                            Pixel p2 = line.getPixel(k);
+                            path.quadTo(p1.getX(), p1.getY(), (p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
+                            p1 = p2;
+                            canvas.drawPath(path, paint);
+                            handler.sendEmptyMessage(1);
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+//                            imageView.setImageBitmap(bitmap);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    public void startShow() {
+        new Thread(show).start();
+    }
+
 
     private class UndoList<T> {
         private ArrayList<T> list;

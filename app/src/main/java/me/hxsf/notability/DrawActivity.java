@@ -23,7 +23,7 @@ import me.hxsf.notability.until.Recorder;
 import me.hxsf.notability.until.SaveLoad;
 
 public class DrawActivity extends AppCompatActivity {
-
+    String notepath;
     ImageView img;
     Drawer drawer;
     float lastx, lasty;
@@ -36,6 +36,7 @@ public class DrawActivity extends AppCompatActivity {
         public void run() {
             while (isrecording) {
                 time += 100;
+                drawer.setTime(time);
                 Log.v("timer", "run " + time);
                 try {
                     Thread.sleep(100);
@@ -51,26 +52,32 @@ public class DrawActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
 
-
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.drawtoolbar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         String a = getIntent().getStringExtra("title");
         if (a.equals("")) {
             a = "未命名 " + ((new SimpleDateFormat("yyyy-MM-dd hh:mm")).format(new Date()));
+            notepath = null;
         } else {
-            Note note = (Note) SaveLoad.load("Notability/" + a + "note.obj");
+            notepath = "Notability/" + a + "/note.obj";
         }
-
+        Log.v("a", a);
         getSupportActionBar().setTitle(a);
+        img = (ImageView) findViewById(R.id.draw_space);
         img.post(new Runnable() {
             @Override
             public void run() {
                 drawer = new Drawer(img, Color.BLACK, 1f);
-                drawer.onNewNote();
+                if (notepath == null) {
+                    drawer.onNewNote();
+                } else {
+                    Note nnn = (Note) SaveLoad.load(notepath);
+                    drawer.onNewNote(nnn);
+                }
                 Log.v("nn", "new Draw");
             }
         });
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.drawtoolbar);
-        setSupportActionBar(toolbar);
         final String finalA = a;
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -78,6 +85,7 @@ public class DrawActivity extends AppCompatActivity {
                 String msg = "";
                 switch (menuItem.getItemId()) {
                     case R.id.nav_audio:
+                        drawer.onAudioClick();
                         msg += "Click audio";
                         if (time == 0) {
                             isrecording = true;
@@ -88,13 +96,14 @@ public class DrawActivity extends AppCompatActivity {
                         } else {
                             msg += " stop, total " + time + " ms";
                             time = 0;
+                            drawer.onAudioClose();
                             isrecording = false;
                             Recorder.stopRecording();
                             toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_menu_mic);
                         }
                         break;
                     case R.id.nav_play:
-
+                        drawer.startShow();
                         break;
                     case R.id.nav_undo:
                         drawer.undo();
@@ -122,11 +131,11 @@ public class DrawActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                //TODO change save to colorpick
+                save();
             }
         });
 
-        img = (ImageView) findViewById(R.id.draw_space);
         img.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -184,11 +193,15 @@ public class DrawActivity extends AppCompatActivity {
 
     //    TODO collection 对象的名称和tag 名称
     public void save() {
-        SaveLoad.save("Notability/C1/" + drawer.getNote().getTitle(), drawer.getNote().getTitle() + ".obj", drawer.getNote());
+        drawer.saveAll();
+//        SaveLoad.save("Notability/"+collection.getTitle()+"/" + drawer.getNote().getTitle(), drawer.getNote().getTitle() + ".obj", drawer.getNote());
+        Log.i("save", "Notability/C1/" + drawer.getNote().getTitle() + "/" + "note.obj");
+        SaveLoad.save("Notability/C1/" + drawer.getNote().getTitle(), "note.obj", drawer.getNote());
     }
 
     public void load(String noteName) {
         drawer.onNewNote((Note) SaveLoad.load("Notability/C1/" + noteName + "/" + noteName + ".obj"));
     }
+
 
 }

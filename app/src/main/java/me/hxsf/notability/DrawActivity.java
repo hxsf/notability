@@ -57,7 +57,7 @@ public class DrawActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         String a = getIntent().getStringExtra("title");
         if (a.equals("")) {
-            a = "未命名 " + ((new SimpleDateFormat("yyyy-MM-dd hh:mm")).format(new Date()));
+            a = "未命名 " + ((new SimpleDateFormat("yyyy-MM-dd hh时mm分")).format(new Date()));
             notepath = null;
         } else {
             notepath = "Notability/" + a + "/note.obj";
@@ -65,19 +65,7 @@ public class DrawActivity extends AppCompatActivity {
         Log.v("a", a);
         getSupportActionBar().setTitle(a);
         img = (ImageView) findViewById(R.id.draw_space);
-        img.post(new Runnable() {
-            @Override
-            public void run() {
-                drawer = new Drawer(img, Color.BLACK, 1f);
-                if (notepath == null) {
-                    drawer.onNewNote();
-                } else {
-                    Note nnn = (Note) SaveLoad.load(notepath);
-                    drawer.onNewNote(nnn);
-                }
-                Log.v("nn", "new Draw");
-            }
-        });
+
         final String finalA = a;
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -166,7 +154,19 @@ public class DrawActivity extends AppCompatActivity {
                 }
             }
         });
-
+        img.post(new Runnable() {
+            @Override
+            public void run() {
+                drawer = new Drawer(img, Color.BLACK, 1f);
+                if (notepath == null) {
+                    drawer.onNewNote();
+                } else {
+                    Note nnn = (Note) SaveLoad.load(notepath);
+                    drawer.onNewNote(nnn);
+                }
+                Log.v("nn", "new Draw");
+            }
+        });
         /*TEST*/
 
 //        BaseLine b = new BaseLine(true, 1, 2, 3, 4);

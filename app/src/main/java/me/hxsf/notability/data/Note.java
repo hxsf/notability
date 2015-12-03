@@ -1,5 +1,7 @@
 package me.hxsf.notability.data;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,11 +14,12 @@ import java.util.Date;
  */
 public class Note  implements Serializable {
     private static final long serialVersionUID = 4L;
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh时mm分");
     public String title;
     public Date lastModified;
     public ArrayList<Paragraph> paragraphs;
     public String tag;
+    public Bitmap finishBitmap;
 
     public Note() {
         title="未命名";

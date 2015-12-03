@@ -10,7 +10,7 @@ public class Player {
     static private MediaPlayer mediaPlayer;
 
     static public void play() {
-
+//        mediaPlayer.set
     }
 
     static public void stop() {

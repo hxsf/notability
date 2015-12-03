@@ -74,6 +74,10 @@ public class CollectionDetailFragment extends Fragment {
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
             File file = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + getArguments().getString(ARG_ITEM_ID));
+            noteArrayList.clear();
+            if (!file.exists()) {
+                file.mkdirs();
+            }
             for (File dir : file.listFiles()) {
                 if (dir.isDirectory()) {
                     noteArrayList.add(new Note(new Date(), null, dir.getName()));

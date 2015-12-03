@@ -105,6 +105,11 @@ public class CollectionListActivity extends AppCompatActivity {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         File file = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability");
+        DummyContent.ITEM_MAP.clear();
+        DummyContent.ITEMS.clear();
+        if (!file.exists()) {
+            file.mkdirs();
+        }
         for (File dir : file.listFiles()) {
             if (dir.isDirectory()) {
                 DummyContent.addItem(new DummyContent.DummyItem(dir.getName(), "分类", ""));

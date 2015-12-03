@@ -23,23 +23,51 @@ import me.hxsf.notability.data.Pixel;
 public class Drawer {
     static Drawer drawer;
     Path path = new Path();
+    Handler handler;
     private Bitmap bitmap; //位图
     private Canvas canvas;//TODO 是否需要定义canvas变量
     private Paint paint;//笔触
     private ImageView imageView; //画板
     private Note note; //存储笔记
+    Runnable show = new Runnable() {
+        @Override
+        public void run() {
+//            TODO to change to timeline
+            Paragraph paragraph;
+            Line line;
+            for (int i = 0; i < note.getParagraphSize(); i++) {
+                paragraph = note.getParagraph(i);
+                if (paragraph.hasAudio) {//表示该段有音频
+                    for (int j = 0; j < paragraph.getLines().size(); j++) {
+                        line = paragraph.getLine(j);
+                        path.reset();
+                        Pixel p1 = line.getPixel(0);
+                        path.moveTo(p1.getX(), p1.getY());
+                        for (int k = 1; k < line.getPixels().size(); k++) {
+                            Pixel p2 = line.getPixel(k);
+                            path.quadTo(p1.getX(), p1.getY(), (p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
+                            p1 = p2;
+                            canvas.drawPath(path, paint);
+                            handler.sendEmptyMessage(1);
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
     private Paragraph paragraph; //存储段落
     private Line line; //存储笔画
     private boolean hasAudio; //判断是否有录音，true 时有
     private int paragraphIndex,totalParagraphIndex;//记录note对象中paragraph 数组中的元素个数
     private int lineIndex,totalLineIndex;//记录paragraph对象中line数组中的元素个数
-    Handler handler;
     private UndoList<Bitmap> undolist;
-
     private Stack<Line> redoStack;
-
     private long time;
-
 
     /**
      //     * @param imageView  画板
@@ -116,6 +144,7 @@ public class Drawer {
         line = new Line(paint.getColor(), paint.getStrokeWidth());//初始化line 对象
         hasAudio=false;
     }
+
     public void onNewNote(Note note){
         this.note = note;
         paragraph = new Paragraph();
@@ -123,11 +152,14 @@ public class Drawer {
     }
 
     public void saveAll() {
-       note.addParagraph(paragraph);
+        note.addParagraph(paragraph);
+        note.finishBitmap = line.addNowBitmap(bitmap, imageView.getWidth(), imageView.getHeight());
    }
+
     public Note getNote(){
         return note;
     }
+
     /**
      * 点击录音：将上一个无声音的Paragraph 对象添加到note对象中，新建一个有音频的Paragraph 对象
      * TODO 获取声音
@@ -144,6 +176,7 @@ public class Drawer {
     public void setTime(Long time) {
         this.time = time;
     }
+
     /**
      * 关闭录音，将上一个有声音的Paragraph 对象添加到note对象中，新建一个无音频的Paragraph 对象
      */
@@ -153,7 +186,6 @@ public class Drawer {
         paragraph=new Paragraph();//创建一个新的、无音频的paragraph 对象
         hasAudio=false;
     }
-
 
     /**
      * 当手指开始移动时，开始画
@@ -180,8 +212,10 @@ public class Drawer {
         paragraph.addLine(line);
         Log.v("drawend", "finish");
     }
+
     private void drawStart(){
         Bitmap b1 = Bitmap.createBitmap(bitmap,0,0,imageView.getWidth(),imageView.getHeight());
+        Log.v("new W&H:", "W:" + imageView.getWidth() + "H:" + imageView.getHeight());
         undolist.add(b1);
         line = new Line(paint.getColor(), paint.getStrokeWidth());//初始化一个新的line 对象
     }
@@ -202,7 +236,6 @@ public class Drawer {
             redoStack.clear();
         }
     }
-
 
     /**
      * 向前，恢复操作
@@ -233,6 +266,7 @@ public class Drawer {
         }
         Log.v("redo", "finish");
     }
+
     /**
      * 向后，撤销操作
      */
@@ -257,39 +291,6 @@ public class Drawer {
         }
 
     }
-
-    Runnable show = new Runnable() {
-        @Override
-        public void run() {
-//            TODO to change to timeline
-            Paragraph paragraph;
-            Line line;
-            for (int i = 0; i < note.getParagraphSize(); i++) {
-                paragraph = note.getParagraph(i);
-                if (!paragraph.hasAudio) {//表示该段有音频
-                    for (int j = 0; j < paragraph.getLines().size(); j++) {
-                        line = paragraph.getLine(j);
-                        path.reset();
-                        Pixel p1 = line.getPixel(0);
-                        path.moveTo(p1.getX(), p1.getY());
-                        for (int k = 1; k < line.getPixels().size(); k++) {
-                            Pixel p2 = line.getPixel(k);
-                            path.quadTo(p1.getX(), p1.getY(), (p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
-                            p1 = p2;
-                            canvas.drawPath(path, paint);
-                            handler.sendEmptyMessage(1);
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-//                            imageView.setImageBitmap(bitmap);
-                        }
-                    }
-                }
-            }
-        }
-    };
 
     public void startShow() {
         new Thread(show).start();

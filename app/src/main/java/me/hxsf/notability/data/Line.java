@@ -1,7 +1,6 @@
 package me.hxsf.notability.data;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,30 +24,9 @@ public class Line  implements Serializable {
         hasAudio = false;
     }
 
-    /**
-     * @param bitmap 原画布
-     * @param startX 起始点横坐标
-     * @param startY 起始点纵坐标
-     * @param endX   终止点横坐标
-     * @param endY   终止点纵坐标
-     */
-    public Bitmap setBitmap(Bitmap bitmap, float startX, float startY, float endX, float endY) {
-        float x,y, width,height;
-        x=((endX>startX)?startX:endX)-penSize/2;
-        y=((endY>startY)?startY:endY)-penSize/2;
-        width=((endX>startX)?(endX-startX):(startX-endX))+penSize;
-        height=((endY>startY)?(endY-startY):(startY-endY))+penSize;
-        Log.v("test", "x:" + x + "   y=" + y + "   w=" + width + "   H=" + height);
-        return Bitmap.createBitmap(bitmap,(int)x, (int)y, (int)width, (int)height);
-    }
-
-
     public Bitmap addNowBitmap(Bitmap bitmap,int width,int height){
         return Bitmap.createBitmap(bitmap,0,0,width,height);
     }
-    /*public  Bitmap getNowBitmap(){
-        return nowBitmap;
-    }*/
     public float getPenSize() {
         return penSize;
     }

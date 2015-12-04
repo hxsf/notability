@@ -2,6 +2,7 @@ package me.hxsf.notability;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,12 +14,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import me.hxsf.notability.data.Note;
 import me.hxsf.notability.draw.BaseLine;
 import me.hxsf.notability.draw.Drawer;
+import me.hxsf.notability.until.Player;
 import me.hxsf.notability.until.Recorder;
 import me.hxsf.notability.until.SaveLoad;
 
@@ -30,22 +33,6 @@ public class DrawActivity extends AppCompatActivity {
     int isstart;
     BaseLine line;
     long time = 0;
-    private boolean isrecording = false;
-    Runnable timer = new Runnable() {
-        @Override
-        public void run() {
-            while (isrecording) {
-                time += 100;
-                drawer.setTime(time);
-                Log.v("timer", "run " + time);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +44,7 @@ public class DrawActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         String a = getIntent().getStringExtra("title");
         if (a.equals("")) {
-            a = "未命名 " + ((new SimpleDateFormat("yyyy-MM-dd hh:mm")).format(new Date()));
+            a = "未命名 " + ((new SimpleDateFormat("yyyy-MM-dd hh时mm分")).format(new Date()));
             notepath = null;
         } else {
             notepath = "Notability/" + a + "/note.obj";
@@ -65,19 +52,7 @@ public class DrawActivity extends AppCompatActivity {
         Log.v("a", a);
         getSupportActionBar().setTitle(a);
         img = (ImageView) findViewById(R.id.draw_space);
-        img.post(new Runnable() {
-            @Override
-            public void run() {
-                drawer = new Drawer(img, Color.BLACK, 1f);
-                if (notepath == null) {
-                    drawer.onNewNote();
-                } else {
-                    Note nnn = (Note) SaveLoad.load(notepath);
-                    drawer.onNewNote(nnn);
-                }
-                Log.v("nn", "new Draw");
-            }
-        });
+
         final String finalA = a;
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -85,25 +60,25 @@ public class DrawActivity extends AppCompatActivity {
                 String msg = "";
                 switch (menuItem.getItemId()) {
                     case R.id.nav_audio:
-                        drawer.onAudioClick();
                         msg += "Click audio";
                         if (time == 0) {
-                            isrecording = true;
-                            new Thread(timer).start();
+                            drawer.onAudioClick();
+                            time=System.currentTimeMillis();
                             msg += " start";
-                            Recorder.startRecording("Notability/" + finalA, "1.arm");
+                            Recorder.startRecording("Notability/Default/" + finalA, "1.arm");
                             toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_menu_mic_full);
                         } else {
                             msg += " stop, total " + time + " ms";
                             time = 0;
                             drawer.onAudioClose();
-                            isrecording = false;
                             Recorder.stopRecording();
                             toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_menu_mic);
                         }
                         break;
                     case R.id.nav_play:
+                        Player.play("Notability/" + finalA + "/1.arm");
                         drawer.startShow();
+                        Log.v("AudioPath:","Notability/" + finalA + "/1.arm");
                         break;
                     case R.id.nav_undo:
                         drawer.undo();
@@ -126,13 +101,19 @@ public class DrawActivity extends AppCompatActivity {
                 return true;
             }
         });
-
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("Navigation", "click");
+                save();
+            }
+        });
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.color_picker);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO change save to colorpick
-                save();
+
             }
         });
 
@@ -150,7 +131,7 @@ public class DrawActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_MOVE:
                         line = new BaseLine(isstart, lastx, lasty, x, y);
 //                        Log.v("bl_Move", line.toString());
-                        drawer.draw(line);
+                        drawer.draw(line,System.currentTimeMillis()-time);
                         isstart = 0;
                         lastx = x;
                         lasty = y;
@@ -159,14 +140,27 @@ public class DrawActivity extends AppCompatActivity {
 //                        Log.v("bl_End ", line.toString());
                         isstart = -1;
                         line = new BaseLine(isstart, lastx, lasty, x, y);
-                        drawer.draw(line);
+                        drawer.draw(line,System.currentTimeMillis()-time);
                         return true;
                     default:
                         return false;
                 }
             }
         });
-
+        img.post(new Runnable() {
+            @Override
+            public void run() {
+                drawer = new Drawer(img, Color.BLACK, 1f);
+                if (notepath == null) {
+                    drawer.onNewNote();
+                } else {
+                    Note nnn = (Note) SaveLoad.load(notepath);
+                    String png = Environment.getExternalStorageDirectory().getPath() + "/Notability/" + finalA + "/cache.png";
+                    drawer.onNewNote(nnn, png);
+                }
+                Log.v("nn", "new Draw");
+            }
+        });
         /*TEST*/
 
 //        BaseLine b = new BaseLine(true, 1, 2, 3, 4);
@@ -193,15 +187,14 @@ public class DrawActivity extends AppCompatActivity {
 
     //    TODO collection 对象的名称和tag 名称
     public void save() {
-        drawer.saveAll();
+        String path = "Notability/Default/" + drawer.getNote().getTitle();
+        File paths = new File(path);
+        if (!paths.exists()) {
+            paths.mkdirs();
+        }
+        drawer.saveAll(path);
 //        SaveLoad.save("Notability/"+collection.getTitle()+"/" + drawer.getNote().getTitle(), drawer.getNote().getTitle() + ".obj", drawer.getNote());
-        Log.i("save", "Notability/C1/" + drawer.getNote().getTitle() + "/" + "note.obj");
-        SaveLoad.save("Notability/C1/" + drawer.getNote().getTitle(), "note.obj", drawer.getNote());
+        Log.i("save", path + "/" + "note.obj");
+        SaveLoad.save(path, "note.obj", drawer.getNote());
     }
-
-    public void load(String noteName) {
-        drawer.onNewNote((Note) SaveLoad.load("Notability/C1/" + noteName + "/" + noteName + ".obj"));
-    }
-
-
 }

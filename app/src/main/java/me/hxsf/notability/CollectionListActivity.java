@@ -70,6 +70,12 @@ public class CollectionListActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setupRecyclerView((RecyclerView) findViewById(R.id.collection_list));
+    }
+
     /**
      * Initialize the contents of the Activity's standard options menu.  You
      * should place your menu items in to <var>menu</var>.
@@ -105,6 +111,11 @@ public class CollectionListActivity extends AppCompatActivity {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         File file = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability");
+        DummyContent.ITEM_MAP.clear();
+        DummyContent.ITEMS.clear();
+        if (!file.exists()) {
+            file.mkdirs();
+        }
         for (File dir : file.listFiles()) {
             if (dir.isDirectory()) {
                 DummyContent.addItem(new DummyContent.DummyItem(dir.getName(), "分类", ""));

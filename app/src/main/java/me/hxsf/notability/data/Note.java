@@ -12,14 +12,14 @@ import java.util.Date;
  */
 public class Note  implements Serializable {
     private static final long serialVersionUID = 4L;
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh时mm分");
     public String title;
     public Date lastModified;
     public ArrayList<Paragraph> paragraphs;
     public String tag;
 
     public Note() {
-        title="未命名";
+        title = "未命名 " + ((new SimpleDateFormat("yyyy-MM-dd hh时mm分")).format(new Date()));
         paragraphs =new ArrayList<>();
     }
 

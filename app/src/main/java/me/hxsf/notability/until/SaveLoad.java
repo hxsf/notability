@@ -25,8 +25,6 @@ public class SaveLoad {
             fos = new FileOutputStream(file);
             oos = new ObjectOutputStream(fos);
             oos.writeObject(sod);
-            ;
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

@@ -12,5 +12,5 @@
         android:id="@+id/draw_space"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#fff"/>
+        android:background="#fff" />
 </RelativeLayout>

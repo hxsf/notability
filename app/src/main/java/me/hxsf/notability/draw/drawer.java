@@ -369,7 +369,6 @@ public class Drawer {
             canvas.setBitmap(bitmap);
             imageView.setImageBitmap(bitmap);
         }
-
     }
 
     public void startShow() {
@@ -378,20 +377,20 @@ public class Drawer {
     }
     public void GrayBitmap(){
         Paint mPaint=new Paint();
+        Bitmap temp = bitmap;
         bitmap=Bitmap.createBitmap(imageView.getWidth(),imageView.getHeight(), Bitmap.Config.ARGB_8888);
         canvas.setBitmap(bitmap);
-
-//        //创建颜色变换矩阵
-//        ColorMatrix mColorMatrix = new ColorMatrix();
-//        //设置灰度影响范围
-//        mColorMatrix.setSaturation(0);
-//        //创建颜色过滤矩阵
-//        ColorMatrixColorFilter mColorFilter = new ColorMatrixColorFilter(mColorMatrix);
-//        //设置画笔的颜色过滤矩阵
-//        mPaint.setColorFilter(mColorFilter);
+        //创建颜色变换矩阵
+        ColorMatrix mColorMatrix = new ColorMatrix();
+        //设置灰度影响范围
+        mColorMatrix.setSaturation(0);
+        //创建颜色过滤矩阵
+        ColorMatrixColorFilter mColorFilter = new ColorMatrixColorFilter(mColorMatrix);
+        //设置画笔的颜色过滤矩阵
+        mPaint.setColorFilter(mColorFilter);
         //使用处理后的画笔绘制图像
-        mPaint.setColor(Color.GRAY);
-//        canvas.drawBitmap(bitmap, 0, 0, mPaint);
+//        mPaint.setColor(Color.GRAY);
+        canvas.drawBitmap(temp, 0, 0, mPaint);
         imageView.setImageBitmap(bitmap);
     }
 

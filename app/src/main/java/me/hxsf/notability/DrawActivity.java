@@ -150,7 +150,7 @@ public class DrawActivity extends AppCompatActivity {
         img.post(new Runnable() {
             @Override
             public void run() {
-                drawer = new Drawer(img, Color.BLACK, 1f);
+                drawer = new Drawer(img, Color.BLUE, 1f);
                 if (notepath == null) {
                     drawer.onNewNote();
                 } else {
@@ -193,7 +193,6 @@ public class DrawActivity extends AppCompatActivity {
             paths.mkdirs();
         }
         drawer.saveAll(path);
-//        SaveLoad.save("Notability/"+collection.getTitle()+"/" + drawer.getNote().getTitle(), drawer.getNote().getTitle() + ".obj", drawer.getNote());
         Log.i("save", path + "/" + "note.obj");
         SaveLoad.save(path, "note.obj", drawer.getNote());
     }

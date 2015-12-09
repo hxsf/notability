@@ -46,11 +46,11 @@ public class Drawer {
             Paragraph paragraph;
             Line line;
             int totalParagraph,totalLine,totalPx;
-            long time1=0l,time2;
             totalParagraph= note.getParagraphSize();
             for (int i = 0; i < totalParagraph; i++) {
                 paragraph = note.getParagraph(i);
                 if (paragraph.hasAudio) {//表示该段有音频
+                    long time1=0l,time2;
                     totalLine=paragraph.getLines().size();
                     for (int j = 0; j < totalLine; j++) {
                         line = paragraph.getLine(j);
@@ -380,17 +380,8 @@ public class Drawer {
         Bitmap temp = bitmap;
         bitmap=Bitmap.createBitmap(imageView.getWidth(),imageView.getHeight(), Bitmap.Config.ARGB_8888);
         canvas.setBitmap(bitmap);
-        //创建颜色变换矩阵
-        ColorMatrix mColorMatrix = new ColorMatrix();
-        //设置灰度影响范围
-        mColorMatrix.setSaturation(0);
-        //创建颜色过滤矩阵
-        ColorMatrixColorFilter mColorFilter = new ColorMatrixColorFilter(mColorMatrix);
-        //设置画笔的颜色过滤矩阵
-        mPaint.setColorFilter(mColorFilter);
-        //使用处理后的画笔绘制图像
-//        mPaint.setColor(Color.GRAY);
-        canvas.drawBitmap(temp, 0, 0, mPaint);
+         mPaint.setAlpha(50);//设置透明度
+        canvas.drawBitmap(temp, 0, 0, mPaint);//重新绘制图像
         imageView.setImageBitmap(bitmap);
     }
 

@@ -77,8 +77,9 @@ public class DrawActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_play:
                         Player.play("Notability/" + finalA + "/1.arm");
+//                        Player.play("Notability/" + finalA + "/"+ finalA +".arm");
                         drawer.startShow();
-                        Log.v("AudioPath:","Notability/" + finalA + "/1.arm");
+                        Log.v("AudioPath:","Notability/" + finalA + "/"+ finalA +".arm");
                         break;
                     case R.id.nav_undo:
                         drawer.undo();
@@ -150,7 +151,7 @@ public class DrawActivity extends AppCompatActivity {
         img.post(new Runnable() {
             @Override
             public void run() {
-                drawer = new Drawer(img, Color.BLUE, 1f);
+                drawer = new Drawer(img, Color.BLACK, 5f);
                 if (notepath == null) {
                     drawer.onNewNote();
                 } else {

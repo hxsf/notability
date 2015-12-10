@@ -109,14 +109,14 @@ public class DrawActivity extends AppCompatActivity {
                 save();
             }
         });
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.color_picker);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO change save to colorpick
-
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.color_picker);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //TODO change save to colorpick
+//
+//            }
+//        });
 
         img.setOnTouchListener(new View.OnTouchListener() {
             @Override

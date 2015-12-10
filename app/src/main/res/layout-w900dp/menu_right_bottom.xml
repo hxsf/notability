@@ -1,0 +1,71 @@
+<me.hxsf.notability.view.ArcMenu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:hyman="http://schemas.android.com/apk/res/me.hxsf.notability"
+    android:id="@+id/id_menu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    hyman:position="right_bottom"
+    hyman:radius="150dp" >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_color_black"
+        android:tag="Music" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_color_red"
+        android:tag="Place" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_color_orange"
+        android:tag="Sleep" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_color_green"
+        android:tag="Sun" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_color_blue"
+        android:tag="People" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_music"
+        android:tag="Music2" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_place"
+        android:tag="Place2" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_sleep"
+        android:tag="Sleep2" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/composer_button" >
+
+        <ImageView
+            android:id="@+id/id_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/composer_lines" />
+    </RelativeLayout>
+
+</me.hxsf.notability.view.ArcMenu>

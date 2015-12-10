@@ -17,6 +17,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 
 import me.hxsf.notability.R;
+import me.hxsf.notability.until.DensityUtil;
 
 /**
  * Created by hxsf on 15－12－10.
@@ -26,7 +27,8 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
     private static final int POS_LEFT_BOTTOM = 1;
     private static final int POS_RIGHT_TOP = 2;
     private static final int POS_RIGHT_BOTTOM = 3;
-
+    final private int deley = 100;
+    private final int margin;
     private Position mPosition = Position.RIGHT_BOTTOM;
     private int mRadius;
     private int sRadius;
@@ -38,7 +40,6 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
      * 菜单的主按钮
      */
     private View mCButton;
-
     private OnMenuItemClickListener mMenuItemClickListener;
 
     public ArcMenu(Context context) {
@@ -79,6 +80,7 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
         Log.e("TAG", "position = " + mPosition + " , radius =  " + mRadius);
 
         a.recycle();
+        margin = DensityUtil.dp2px(getContext(), 16f);
 
     }
 
@@ -113,11 +115,11 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
                 int cHeight = child.getMeasuredHeight();
                 // 如果菜单位置在底部 左下，右下
                 if (mPosition == Position.LEFT_BOTTOM || mPosition == Position.RIGHT_BOTTOM) {
-                    ct = getMeasuredHeight() - height - ct;
+                    ct = getMeasuredHeight() - height - ct - margin;
                 }
                 // 右上，右下
                 if (mPosition == Position.RIGHT_TOP || mPosition == Position.RIGHT_BOTTOM) {
-                    cl = getMeasuredWidth() - width - cl;
+                    cl = getMeasuredWidth() - width - cl - margin;
                 }
                 child.layout(cl, ct, cl + cWidth, ct + cHeight);
             }
@@ -131,11 +133,11 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
                 int cHeight = child.getMeasuredHeight();
                 // 如果菜单位置在底部 左下，右下
                 if (mPosition == Position.LEFT_BOTTOM || mPosition == Position.RIGHT_BOTTOM) {
-                    ct = getMeasuredHeight() - (height + cHeight) / 2 - ct;
+                    ct = getMeasuredHeight() - (height + cHeight) / 2 - ct - margin;
                 }
                 // 右上，右下
                 if (mPosition == Position.RIGHT_TOP || mPosition == Position.RIGHT_BOTTOM) {
-                    cl = getMeasuredWidth() - (width + cWidth) / 2 - cl;
+                    cl = getMeasuredWidth() - (width + cWidth) / 2 - cl - margin;
                 }
                 child.layout(cl, ct, cl + cWidth, ct + cHeight);
             }
@@ -156,23 +158,22 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
 
         int width = mCButton.getMeasuredWidth();
         int height = mCButton.getMeasuredHeight();
-
         switch (mPosition) {
             case LEFT_TOP:
-                l = 0;
-                t = 0;
+                l = margin;
+                t = margin;
                 break;
             case LEFT_BOTTOM:
-                l = 0;
-                t = getMeasuredHeight() - height;
+                l = margin;
+                t = getMeasuredHeight() - height - margin;
                 break;
             case RIGHT_TOP:
-                l = getMeasuredWidth() - width;
-                t = 0;
+                l = getMeasuredWidth() - width - margin;
+                t = margin;
                 break;
             case RIGHT_BOTTOM:
-                l = getMeasuredWidth() - width;
-                t = getMeasuredHeight() - height;
+                l = getMeasuredWidth() - width - margin;
+                t = getMeasuredHeight() - height - margin;
                 break;
         }
         mCButton.layout(l, t, l + width, t + width);
@@ -186,9 +187,14 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
         // mCButton = getChildAt(0);
         // }
 
-        rotateCButton(v, 0f, 360f, 300);
+        if (mCurrentStatus == Status.CLOSE) {
+            rotateCButton(v, 0f, 135f, deley);
+        } else {
+            rotateCButton(v, 135f, 0f, deley);
+        }
 
-        toggleMenu(300);
+
+        toggleMenu(deley);
 
     }
 
@@ -372,33 +378,42 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
 
             View childView = getChildAt(i);
             if (i == pos) {
-                childView.startAnimation(scaleBigAnim(300));
+                childView.startAnimation(scaleBigAnim(deley));
             } else {
 
-                childView.startAnimation(scaleSmallAnim(300));
+                childView.startAnimation(scaleSmallAnim(deley));
             }
 
             childView.setClickable(false);
             childView.setFocusable(false);
 
         }
+        // TODO sidebar onclick
         Log.v("item", pos+"");
         switch (pos) {
             case 0:
+                //color_black
                 break;
             case 1:
+                //color_red
                 break;
             case 2:
+                //color_orange
                 break;
             case 3:
+                //color_green
                 break;
             case 4:
+                //color_blue
                 break;
             case 5:
+                //weight_small
                 break;
             case 6:
+                //weight_middle
                 break;
             case 7:
+                //weight_large
                 break;
             default:
                 break;

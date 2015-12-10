@@ -1,71 +1,71 @@
 <me.hxsf.notability.view.ArcMenu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:hyman="http://schemas.android.com/apk/res/me.hxsf.notability"
     android:id="@+id/id_menu"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     hyman:position="right_bottom"
-    hyman:radius="150dp" >
+    hyman:radius="150dp">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/composer_color_black"
-        android:tag="Music" />
+        android:tag="color_black" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/composer_color_red"
-        android:tag="Place" />
+        android:tag="color_red" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/composer_color_orange"
-        android:tag="Sleep" />
+        android:tag="color_orange" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/composer_color_green"
-        android:tag="Sun" />
+        android:tag="color_green" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/composer_color_blue"
-        android:tag="People" />
+        android:tag="color_blue" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/composer_music"
-        android:tag="Music2" />
+        android:src="@drawable/composer_weight_small"
+        android:tag="weight_small" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/composer_place"
-        android:tag="Place2" />
+        android:src="@drawable/composer_weight_middle"
+        android:tag="weight_middle" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/composer_sleep"
-        android:tag="Sleep2" />
+        android:src="@drawable/composer_weight_large"
+        android:tag="weight_large" />
 
-    <RelativeLayout
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/color_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/composer_button" >
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_more"
+        app:borderWidth="0dp"
+        app:elevation="10dip"
+        app:pressedTranslationZ="10dip"
+        app:rippleColor="#33728dff" />
 
-        <ImageView
-            android:id="@+id/id_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:src="@drawable/composer_lines" />
-    </RelativeLayout>
 
 </me.hxsf.notability.view.ArcMenu>

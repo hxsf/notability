@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -110,7 +111,13 @@ public class CollectionDetailFragment extends Fragment {
             }
             for (File dir : file.listFiles()) {
                 if (dir.isDirectory()) {
-                    noteArrayList.add(new Note(new Date(), null, dir.getName()));
+                    File ff = new File(dir.getPath()+"/note.obj");
+                    if (!ff.exists()) {
+                        continue;
+                    }
+                    long lastModified = ff.lastModified();
+                    Log.v("lastModified", ff.getPath()+":"+lastModified+"="+(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(lastModified)));
+                    noteArrayList.add(new Note(new Date(lastModified), null, dir.getName()));
                 }
             }
             NoteListViewAdapter noteListViewAdapter = new NoteListViewAdapter(noteArrayList, getActivity());

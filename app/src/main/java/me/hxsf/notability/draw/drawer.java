@@ -208,6 +208,7 @@ public class Drawer {
         Log.i("savepng", "createfile");
         FileOutputStream out = null;
         try {
+            note.setLastModified(f.lastModified());
             out = new FileOutputStream(f);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
@@ -231,7 +232,6 @@ public class Drawer {
 
     /**
      * 点击录音：将上一个无声音的Paragraph 对象添加到note对象中，新建一个有音频的Paragraph 对象
-     * TODO 获取声音
      */
     public void onAudioClick() {
         if (paragraph != null) {
@@ -272,7 +272,6 @@ public class Drawer {
      */
     public void drawEnd(){
         Log.v("drawend", "start");
-        //添加bitmap 快照
         paragraph.addLine(line);
         Log.v("drawend", "finish");
     }
@@ -280,7 +279,7 @@ public class Drawer {
     private void drawStart(){
         Bitmap b1 = Bitmap.createBitmap(bitmap,0,0,imageView.getWidth(),imageView.getHeight());
         Log.v("new W&H:", "W:" + imageView.getWidth() + "H:" + imageView.getHeight());
-        undolist.add(b1);
+        undolist.add(b1);//添加bitmap 快照
         line = new Line(paint.getColor(), paint.getStrokeWidth());//初始化一个新的line 对象
     }
 
@@ -312,6 +311,7 @@ public class Drawer {
         canvas.drawPath(path, paint);
         imageView.setImageBitmap(bitmap);
         if(bl.isstart==-1) {
+            drawing(bl.x2, bl.y2,time);
             drawEnd();
             redoStack.clear();
         }

@@ -92,6 +92,10 @@ public class Note  implements Serializable {
         paragraphs.set(index, paragraph);
     }
 
+    public void setLastModified(long lastModified) {
+        this.lastModified = new Date(lastModified);
+    }
+
     public String getLastModified() {
         return sdf.format(lastModified);
     }

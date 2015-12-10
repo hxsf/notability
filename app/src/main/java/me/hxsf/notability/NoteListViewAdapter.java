@@ -1,6 +1,7 @@
 package me.hxsf.notability;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 import android.view.View;
@@ -63,6 +64,7 @@ public class NoteListViewAdapter extends BaseAdapter {
 //                imageView.setImageBitmap(note.getMinimap());
 //            }
             createTime.setText(note.getLastModified());
+            Log.i("last", note.lastModified + "=" +note.getLastModified());
             title.setText(note.getTitle());
         }
         return view;

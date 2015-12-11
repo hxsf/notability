@@ -155,7 +155,7 @@ public class DrawActivity extends AppCompatActivity {
         img.post(new Runnable() {
             @Override
             public void run() {
-                drawer = new Drawer(img, Color.BLACK, 5f);
+                drawer = Drawer.newDrawer(img, Color.BLACK, 5f);
                 if (notepath == null) {
                     drawer.onNewNote();
                 } else {

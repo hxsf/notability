@@ -122,7 +122,6 @@ public class CollectionListActivity extends AppCompatActivity {
             }
         }
 
-
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
     }
 

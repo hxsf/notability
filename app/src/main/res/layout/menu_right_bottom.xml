@@ -1,0 +1,71 @@
+<me.hxsf.notability.view.ArcMenu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:hyman="http://schemas.android.com/apk/res/me.hxsf.notability"
+    android:id="@+id/id_menu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    hyman:position="right_bottom"
+    hyman:radius="150dp">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_color_black"
+        android:tag="color_black" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_color_red"
+        android:tag="color_red" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_color_orange"
+        android:tag="color_orange" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_color_green"
+        android:tag="color_green" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_color_blue"
+        android:tag="color_blue" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_weight_small"
+        android:tag="weight_small" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_weight_middle"
+        android:tag="weight_middle" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/composer_weight_large"
+        android:tag="weight_large" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/color_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_more"
+        app:borderWidth="0dp"
+        app:elevation="10dip"
+        app:pressedTranslationZ="10dip"
+        app:rippleColor="#33728dff" />
+
+
+</me.hxsf.notability.view.ArcMenu>

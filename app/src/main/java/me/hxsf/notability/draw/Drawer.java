@@ -3,9 +3,6 @@ package me.hxsf.notability.draw;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Environment;
@@ -20,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Stack;
-import java.util.Timer;
 
 import me.hxsf.notability.data.Line;
 import me.hxsf.notability.data.Note;
@@ -108,7 +104,7 @@ public class Drawer {
      * @param color  笔触颜色
      * @param penSize  笔触粗细
      */
-    public Drawer(final ImageView imageView, int color, float penSize) {
+    private Drawer(final ImageView imageView, int color, float penSize) {
         //初始化画笔
         setPaint(color, penSize);
         this.imageView = imageView;
@@ -124,13 +120,21 @@ public class Drawer {
                 imageView.setImageBitmap(bitmap);
             }
         };
+    }
 
+    public static Drawer newDrawer(final ImageView imageView, int color, float penSize) {
+        drawer = new Drawer(imageView, color, penSize);
+        return drawer;
     }
 
     public static Drawer getDrawer(ImageView imageView, int color, float penSize) {
         if (drawer == null) {
             drawer = new Drawer(imageView, color, penSize);
         }
+        return drawer;
+    }
+
+    public static Drawer getDrawer() {
         return drawer;
     }
 
@@ -154,7 +158,7 @@ public class Drawer {
      * 改变笔触颜色
      * @param color 笔触颜色
      */
-    public void changePaint(int color) {
+    public void changePaintColor(int color) {
         paint.setColor(color);
     }
 
@@ -162,7 +166,7 @@ public class Drawer {
      * 改变笔触宽度
      * @param penSize 笔触粗细
      */
-    public void changePaint(float penSize) {
+    public void changePaintSize(float penSize) {
         paint.setStrokeWidth(penSize);
     }
 
@@ -224,7 +228,7 @@ public class Drawer {
             e.printStackTrace();
         }
         Log.i("savepng ", "exit");
-   }
+    }
 
     public Note getNote(){
         return note;
@@ -380,7 +384,7 @@ public class Drawer {
         Bitmap temp = bitmap;
         bitmap=Bitmap.createBitmap(imageView.getWidth(),imageView.getHeight(), Bitmap.Config.ARGB_8888);
         canvas.setBitmap(bitmap);
-         mPaint.setAlpha(50);//设置透明度
+        mPaint.setAlpha(50);//设置透明度
         canvas.drawBitmap(temp, 0, 0, mPaint);//重新绘制图像
         imageView.setImageBitmap(bitmap);
     }

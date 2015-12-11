@@ -2,6 +2,7 @@ package me.hxsf.notability.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -17,6 +18,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 
 import me.hxsf.notability.R;
+import me.hxsf.notability.draw.Drawer;
 import me.hxsf.notability.until.DensityUtil;
 
 /**
@@ -158,6 +160,7 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
 
         int width = mCButton.getMeasuredWidth();
         int height = mCButton.getMeasuredHeight();
+        Log.i("wwhh", width + " - " + height);
         switch (mPosition) {
             case LEFT_TOP:
                 l = margin;
@@ -389,31 +392,40 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
 
         }
         // TODO sidebar onclick
+        Drawer drawer = Drawer.getDrawer();
         Log.v("item", pos+"");
         switch (pos) {
             case 0:
                 //color_black
+                drawer.changePaintColor(Color.BLACK);
                 break;
             case 1:
                 //color_red
+                drawer.changePaintColor(Color.RED);
                 break;
             case 2:
                 //color_orange
+                drawer.changePaintColor(Color.YELLOW);
                 break;
             case 3:
                 //color_green
+                drawer.changePaintColor(Color.GREEN);
                 break;
             case 4:
                 //color_blue
+                drawer.changePaintColor(Color.rgb(0, 255, 255));
                 break;
             case 5:
                 //weight_small
+                drawer.changePaintSize(2f);
                 break;
             case 6:
                 //weight_middle
+                drawer.changePaintSize(4f);
                 break;
             case 7:
                 //weight_large
+                drawer.changePaintSize(10f);
                 break;
             default:
                 break;

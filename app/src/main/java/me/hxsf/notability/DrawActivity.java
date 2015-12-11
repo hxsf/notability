@@ -3,16 +3,17 @@ package me.hxsf.notability;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -33,6 +34,7 @@ public class DrawActivity extends AppCompatActivity {
     int isstart;
     BaseLine line;
     long time = 0;
+    private long lastBackTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,11 +104,13 @@ public class DrawActivity extends AppCompatActivity {
                 return true;
             }
         });
+        toolbar.setNavigationIcon(R.drawable.ic_done);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i("Navigation", "click");
                 save();
+                finish();
             }
         });
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.color_picker);
@@ -184,6 +188,27 @@ public class DrawActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_activity_draw, menu);
         return true;
+    }
+
+    /**
+     * Take care of calling onBackPressed() for pre-Eclair platforms.
+     *
+     * @param keyCode
+     * @param event
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        long nowtime = System.currentTimeMillis();
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (nowtime - lastBackTime > 1000) {
+                lastBackTime = nowtime;
+                Toast.makeText(this, "再按一次返回键以返回上级（不保存）", Toast.LENGTH_SHORT).show();
+            } else {
+                finish();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     //    TODO collection 对象的名称和tag 名称

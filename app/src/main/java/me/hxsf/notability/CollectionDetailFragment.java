@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -34,12 +33,11 @@ public class CollectionDetailFragment extends Fragment {
      * represents.
      */
     public static final String ARG_ITEM_ID = "item_id";
-
+    View rootView;
     /**
      * The dummy content this fragment is presenting.
      */
     private DummyContent.DummyItem mItem;
-
     private ArrayList<Note> noteArrayList = new ArrayList<>();
 
     /**
@@ -67,8 +65,6 @@ public class CollectionDetailFragment extends Fragment {
         }
     }
 
-    View rootView;
-
     @Override
     public void onResume() {
         super.onResume();
@@ -79,7 +75,12 @@ public class CollectionDetailFragment extends Fragment {
         }
         for (File dir : file.listFiles()) {
             if (dir.isDirectory()) {
-                noteArrayList.add(new Note(new Date(), null, dir.getName()));
+                File ff = new File(dir.getPath() + "/note.obj");
+                if (!ff.exists()) {
+                    continue;
+                }
+                long lastModified = ff.lastModified();
+                noteArrayList.add(new Note(new Date(lastModified), null, dir.getName()));
             }
         }
         NoteListViewAdapter noteListViewAdapter = new NoteListViewAdapter(noteArrayList, getActivity());
@@ -101,40 +102,6 @@ public class CollectionDetailFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.collection_detail, container, false);
-
-        // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            File file = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + getArguments().getString(ARG_ITEM_ID));
-            noteArrayList.clear();
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-            for (File dir : file.listFiles()) {
-                if (dir.isDirectory()) {
-                    File ff = new File(dir.getPath()+"/note.obj");
-                    if (!ff.exists()) {
-                        continue;
-                    }
-                    long lastModified = ff.lastModified();
-                    Log.v("lastModified", ff.getPath()+":"+lastModified+"="+(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(lastModified)));
-                    noteArrayList.add(new Note(new Date(lastModified), null, dir.getName()));
-                }
-            }
-            NoteListViewAdapter noteListViewAdapter = new NoteListViewAdapter(noteArrayList, getActivity());
-            ListView listView = (ListView) rootView;
-            listView.setAdapter(noteListViewAdapter);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Log.v("s",position+"");
-//                    final LinearLayout hide = (LinearLayout)view.findViewById(R.id.note);
-                    Intent intent = new Intent(getActivity(), DrawActivity.class);
-                    intent.putExtra("title", getArguments().getString(ARG_ITEM_ID) + "/" + ((TextView) view.findViewById(R.id.note_title)).getText());
-                    startActivity(intent);
-                }
-            });
-        }
-
         return rootView;
     }
 }

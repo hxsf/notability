@@ -132,17 +132,22 @@ public class DrawActivity extends AppCompatActivity {
                         isstart = 1;
                         lastx = x;
                         lasty = y;
+                        Log.v("Touch", "Down");
                         return true;
                     case MotionEvent.ACTION_MOVE:
                         line = new BaseLine(isstart, lastx, lasty, x, y);
-//                        Log.v("bl_Move", line.toString());
+                        Log.v("Touch", "Move");
                         drawer.draw(line,System.currentTimeMillis()-time);
                         isstart = 0;
                         lastx = x;
                         lasty = y;
                         return true;
                     case MotionEvent.ACTION_UP:
-//                        Log.v("bl_End ", line.toString());
+                        if (isstart == 1) {
+                            Log.v("Touch", "Up ----- Click");
+                            return true;
+                        }
+                        Log.v("Touch", "Up");
                         isstart = -1;
                         line = new BaseLine(isstart, lastx, lasty, x, y);
                         drawer.draw(line,System.currentTimeMillis()-time);

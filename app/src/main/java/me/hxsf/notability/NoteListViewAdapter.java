@@ -30,6 +30,9 @@ public class NoteListViewAdapter extends BaseAdapter {
     public NoteListViewAdapter(ArrayList<Note> notelist, Context context) {
         this.notelist = notelist;
         this.context = context;
+        for (Note item : notelist) {
+            System.out.println(item.getTitle() + " = " + item.getLastModified());
+        }
     }
 
     @Override

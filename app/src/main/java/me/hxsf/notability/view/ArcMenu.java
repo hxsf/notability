@@ -430,7 +430,7 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
             default:
                 break;
         }
-
+        rotateCButton(mCButton, 135f, 0f, deley);
     }
 
     private Animation scaleSmallAnim(int duration) {

@@ -193,6 +193,10 @@ public class Drawer {
 
     }
 
+    public File getCache(String path) {
+        saveAll(path);
+        return new File(Environment.getExternalStorageDirectory().getPath() + "/" + path, "cache.png");
+    }
     public void saveAll(String path) {
         note.addParagraph(paragraph);
 //        note.finishBitmap = line.addNowBitmap(bitmap, imageView.getWidth(), imageView.getHeight());

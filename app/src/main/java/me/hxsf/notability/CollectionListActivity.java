@@ -16,9 +16,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import me.hxsf.notability.dummy.DummyContent;
@@ -40,6 +44,44 @@ public class CollectionListActivity extends BaseActivity {
      */
     private boolean mTwoPane;
     private Context context;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        View view = getWindow().getDecorView().findViewById(R.id.rootview);//查找通过setContentView上的根布局
+        if (view == null) return;
+        final File basePath = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/Default/");
+        if (basePath.exists()) {
+            //引导过了
+            System.out.println("not first");
+            return;
+        }
+        System.out.println("show demo");
+        ViewParent viewParent = view.getParent();
+        if (viewParent instanceof FrameLayout) {
+            final FrameLayout frameLayout = (FrameLayout) viewParent;
+            final ImageView guideImage = new ImageView(this);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
+            guideImage.setLayoutParams(params);
+            guideImage.setScaleType(ImageView.ScaleType.FIT_XY);
+            guideImage.setImageResource(R.drawable.helloworld);
+            guideImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    frameLayout.removeView(guideImage);
+                    File nomedia = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/.nomedia");
+                    if (!nomedia.exists()) {
+                        try {
+                            nomedia.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            frameLayout.addView(guideImage);//添加引导图片
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,5 +249,5 @@ public class CollectionListActivity extends BaseActivity {
                 return super.toString() + " '" + mContentView.getText() + "'";
             }
         }
-    }
+	}
 }

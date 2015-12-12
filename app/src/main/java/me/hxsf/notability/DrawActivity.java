@@ -1,6 +1,8 @@
 package me.hxsf.notability;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -81,7 +83,6 @@ public class DrawActivity extends AppCompatActivity {
                         Player.play("Notability/" + finalA + "/1.arm");
 //                        Player.play("Notability/" + finalA + "/"+ finalA +".arm");
                         drawer.startShow();
-                        Log.v("AudioPath:","Notability/" + finalA + "/"+ finalA +".arm");
                         break;
                     case R.id.nav_undo:
                         drawer.undo();
@@ -93,6 +94,11 @@ public class DrawActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_share:
                         msg += "Click share";
+                        Uri uri = Uri.fromFile(drawer.getCache(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + finalA + "/cache.png"));
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.setType("image/*");
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        startActivity(Intent.createChooser(shareIntent, "请选择"));
                         break;
                 }
 

@@ -84,8 +84,9 @@ public class CollectionDetailFragment extends Fragment {
             }
         }
         NoteListViewAdapter noteListViewAdapter = new NoteListViewAdapter(noteArrayList, getActivity());
-        ListView listView = (ListView) rootView;
+        ListViewForScrollView listView = (ListViewForScrollView) rootView;
         listView.setAdapter(noteListViewAdapter);
+        listView.initSlideMode(ListViewForScrollView.MOD_BOTH);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

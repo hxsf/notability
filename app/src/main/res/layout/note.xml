@@ -3,30 +3,102 @@
     android:id="@+id/note"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dip"
+    android:paddingLeft="-181dp"
+    android:paddingRight="-91dp"
     android:orientation="horizontal">
-    
-    <ImageView
-        android:id="@+id/minimap"
-        android:layout_width="30dip"
-        android:layout_height="40dip" />
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
-        android:orientation="vertical">
+        android:id="@+id/llayout_left"
+        android:layout_width="180dp"
+        android:layout_height="match_parent" >
 
-        <TextView
-            android:id="@+id/note_title"
+        <RelativeLayout
+            android:id="@+id/rename"
+            android:layout_width="90dp"
+            android:layout_height="match_parent"
+            android:background="#0F0"
+            android:clickable="true" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="重命名"
+                android:textColor="#000"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/move"
+            android:layout_width="90dp"
+            android:layout_height="match_parent"
+            android:background="#0FF"
+            android:clickable="true" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="移动到"
+                android:textColor="#000"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="sad"/>
-        <TextView
-            android:id="@+id/lastModified"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="asddd" />
+            android:layout_toLeftOf="@+id/llayout_right"
+            android:orientation="horizontal" >
+            <ImageView
+                android:id="@+id/minimap"
+                android:layout_width="30dip"
+                android:layout_height="40dip" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:orientation="vertical">
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/note_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="sad"/>
+                <TextView
+                    android:id="@+id/lastModified"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="asddd" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llayout_right"
+            android:layout_width="90dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true" >
+            <RelativeLayout
+                android:id="@+id/delete"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:background="#F00"
+                android:clickable="true" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="删除"
+                    android:textColor="#FFF"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

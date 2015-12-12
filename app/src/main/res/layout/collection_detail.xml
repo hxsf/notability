@@ -4,6 +4,6 @@
     style="?android:attr/textAppearanceLarge"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:padding="0dp"
     android:textIsSelectable="false"
     tools:context="me.hxsf.notability.CollectionDetailFragment" ></me.hxsf.notability.ListViewForScrollView>

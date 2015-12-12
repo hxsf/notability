@@ -9,11 +9,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.List;
@@ -60,6 +63,7 @@ public class CollectionListActivity extends AppCompatActivity {
         View recyclerView = findViewById(R.id.collection_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
+
 
         if (findViewById(R.id.collection_detail_container) != null) {
             // The detail container view will be present only in the
@@ -121,8 +125,29 @@ public class CollectionListActivity extends AppCompatActivity {
                 DummyContent.addItem(new DummyContent.DummyItem(dir.getName(), "分类", ""));
             }
         }
+        final SimpleItemRecyclerViewAdapter mAdapter = new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS);
+        recyclerView.setAdapter(mAdapter);
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
 
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+            //在这个回调 我们处理滑动
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                Log.d("asd", "onSwiped() called with " + "viewHolder = [" + viewHolder + "], direction = [" + direction + "]");
+                //这里我们通过viewHolder获取position
+                int position = viewHolder.getAdapterPosition();
+                DummyContent.ITEMS.remove(position);
+                mAdapter.notifyItemRemoved(position);
+//                Toast.makeText(getActivity(), "拆散的position:"+position, Toast.LENGTH_SHORT).show();
+            }
+
+            // 暂时不处理移动事件...
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                Log.d("asd", "onMove() called with " + "recyclerView = [" + recyclerView + "], viewHolder = [" + viewHolder + "], target = [" + target + "]");
+                return false;
+            }
+
+        }).attachToRecyclerView(recyclerView);
     }
 
     public class SimpleItemRecyclerViewAdapter

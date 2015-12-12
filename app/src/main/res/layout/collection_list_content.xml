@@ -7,9 +7,7 @@
         android:id="@+id/collection_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/text_margin"
-        android:layout_marginRight="@dimen/text_margin"
-        android:layout_marginTop="@dimen/text_margin"
+        android:layout_margin="@dimen/text_margin"
         android:layout_weight="1"
         android:minWidth="100dip"
         android:singleLine="true"
@@ -18,9 +16,7 @@
 
     <TextView android:id="@+id/collection_num" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/text_margin"
-        android:layout_marginLeft="@dimen/text_margin"
-        android:layout_marginTop="@dimen/text_margin"
+        android:layout_margin="@dimen/text_margin"
         android:singleLine="true"
         android:text="100"
         android:textAppearance="?attr/textAppearanceListItem" />

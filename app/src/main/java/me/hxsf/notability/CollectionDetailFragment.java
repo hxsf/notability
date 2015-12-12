@@ -69,6 +69,7 @@ public class CollectionDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
         File file = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + getArguments().getString(ARG_ITEM_ID));
+        ((CollectionDetailActivity) getActivity()).collection = getArguments().getString(ARG_ITEM_ID);
         noteArrayList.clear();
         if (!file.exists()) {
             file.mkdirs();

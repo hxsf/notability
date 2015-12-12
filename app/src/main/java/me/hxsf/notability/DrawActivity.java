@@ -228,3 +228,4 @@ public class DrawActivity extends AppCompatActivity {
         SaveLoad.save(path, "note.obj", drawer.getNote());
     }
 }
+

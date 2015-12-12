@@ -213,6 +213,7 @@ public class Drawer {
         FileOutputStream out = null;
         try {
             note.setLastModified(f.lastModified());
+            Log.v("In Drawer ","f.lastModified="+f.lastModified());
             out = new FileOutputStream(f);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
@@ -244,7 +245,6 @@ public class Drawer {
         paragraph=new Paragraph(true);//创建一个新的、有音频的paragraph 对象
         hasAudio=true;
     }
-
 
     /**
      * 关闭录音，将上一个有声音的Paragraph 对象添加到note对象中，新建一个无音频的Paragraph 对象

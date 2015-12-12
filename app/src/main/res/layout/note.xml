@@ -16,7 +16,7 @@
             android:layout_width="90dp"
             android:layout_height="match_parent"
             android:background="#0F0"
-            android:clickable="true" >
+            android:clickable="true">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
                 android:gravity="center"
                 android:text="重命名"
                 android:textColor="#000"
-                android:textSize="15sp" />
+                android:textSize="15sp"/>
         </RelativeLayout>
 
         <RelativeLayout

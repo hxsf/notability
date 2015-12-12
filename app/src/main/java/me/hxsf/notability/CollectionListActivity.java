@@ -1,12 +1,13 @@
 package me.hxsf.notability;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -16,12 +17,12 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.List;
 
 import me.hxsf.notability.dummy.DummyContent;
+import me.hxsf.notability.view.BaseActivity;
 
 /**
  * An activity representing a list of Collections. This activity
@@ -31,13 +32,14 @@ import me.hxsf.notability.dummy.DummyContent;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class CollectionListActivity extends AppCompatActivity {
+public class CollectionListActivity extends BaseActivity {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
     private boolean mTwoPane;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +74,7 @@ public class CollectionListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+        context = this;
     }
 
     @Override
@@ -80,32 +83,6 @@ public class CollectionListActivity extends AppCompatActivity {
         setupRecyclerView((RecyclerView) findViewById(R.id.collection_list));
     }
 
-    /**
-     * Initialize the contents of the Activity's standard options menu.  You
-     * should place your menu items in to <var>menu</var>.
-     * <p/>
-     * <p>This is only called once, the first time the options menu is
-     * displayed.  To update the menu every time it is displayed, see
-     * {@link #onPrepareOptionsMenu}.
-     * <p/>
-     * <p>The default implementation populates the menu with standard system
-     * menu items.  These are placed in the {@link Menu#CATEGORY_SYSTEM} group so that
-     * they will be correctly ordered with application-defined menu items.
-     * Deriving classes should always call through to the base implementation.
-     * <p/>
-     * <p>You can safely hold on to <var>menu</var> (and any items created
-     * from it), making modifications to it as desired, until the next
-     * time onCreateOptionsMenu() is called.
-     * <p/>
-     * <p>When you add items to the menu, you can implement the Activity's
-     * {@link #onOptionsItemSelected} method to handle them there.
-     *
-     * @param menu The options menu in which you place your items.
-     * @return You must return true for the menu to be displayed;
-     * if you return false it will not be shown.
-     * @see #onPrepareOptionsMenu
-     * @see #onOptionsItemSelected
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 //        MenuInflater inflater = getMenuInflater();
@@ -131,12 +108,24 @@ public class CollectionListActivity extends AppCompatActivity {
 
             //在这个回调 我们处理滑动
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
                 Log.d("asd", "onSwiped() called with " + "viewHolder = [" + viewHolder + "], direction = [" + direction + "]");
                 //这里我们通过viewHolder获取position
-                int position = viewHolder.getAdapterPosition();
-                DummyContent.ITEMS.remove(position);
-                mAdapter.notifyItemRemoved(position);
+                new AlertDialog.Builder(context).setTitle("确定删除")
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int position = viewHolder.getAdapterPosition();
+                                mAdapter.notifyItemRemoved(position);
+                                dialog.dismiss();
+                            }
+                        }).show();
 //                Toast.makeText(getActivity(), "拆散的position:"+position, Toast.LENGTH_SHORT).show();
             }
 

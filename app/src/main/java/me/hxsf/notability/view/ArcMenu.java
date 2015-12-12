@@ -16,6 +16,7 @@ import android.view.animation.AnimationSet;
 import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
+import android.widget.Toast;
 
 import me.hxsf.notability.R;
 import me.hxsf.notability.draw.Drawer;
@@ -82,7 +83,9 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
         Log.e("TAG", "position = " + mPosition + " , radius =  " + mRadius);
 
         a.recycle();
-        margin = DensityUtil.dp2px(getContext(), 16f);
+        margin = DensityUtil.dp2px(context, 16f);
+        System.out.println("margin: " + margin);
+        Toast.makeText(context, "margin: " + margin, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -160,7 +163,7 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
 
         int width = mCButton.getMeasuredWidth();
         int height = mCButton.getMeasuredHeight();
-        Log.i("wwhh", width + " - " + height);
+        Log.d("wwhh", width + " - " + height);
         switch (mPosition) {
             case LEFT_TOP:
                 l = margin;
@@ -179,7 +182,7 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
                 t = getMeasuredHeight() - height - margin;
                 break;
         }
-        mCButton.layout(l, t, l + width, t + width);
+        mCButton.layout(l, t, l + width, t + height);
     }
 
     @Override

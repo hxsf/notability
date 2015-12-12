@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,7 +21,8 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import me.hxsf.notability.data.Note;
-import me.hxsf.notability.until.SaveLoad;
+import me.hxsf.notability.until.FileHelper;
+import me.hxsf.notability.view.BaseActivity;
 
 /**
  * Created by hxsf on 15－11－27.
@@ -41,7 +43,7 @@ public class NoteListViewAdapter extends BaseAdapter {
     public NoteListViewAdapter(ArrayList<Note> notelist, Context context) {
         this.notelist = notelist;
         this.context = context;
-        collection = ((CollectionDetailActivity) context).collection;
+        collection = ((BaseActivity) context).collection;
 
         for (Note item : notelist) {
             System.out.println(item.getTitle() + " = " + item.getLastModified());
@@ -76,114 +78,6 @@ public class NoteListViewAdapter extends BaseAdapter {
         final View rename = view.findViewById(R.id.rename);
         final View move = view.findViewById(R.id.move);
         final View delete = view.findViewById(R.id.delete);
-        rename.setOnClickListener(new View.OnClickListener() {//重命名
-            @Override
-            public void onClick(View view1) {
-                final TextView noteTag=(TextView) view.findViewById(R.id.note_title);//获取item元素
-                final String name= (String) noteTag.getText();//获取note标题
-                System.out.println("re ame  "+name);
-                final EditText renameEdit=new EditText(context);
-                renameEdit.setText(name);//设置初始值
-                new AlertDialog.Builder(context).setTitle("重命名")//设置标题
-                        .setView(renameEdit)//绑定编辑栏
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {//设置确定事件
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String newName = renameEdit.getText().toString();//获取新文件名
-                                System.out.println("newName  :"+newName);
-                                File newFile=new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + collection + "/" + newName);
-                                if(newFile.exists()){//若文件名已存在
-                                    Toast.makeText(context,"文件名已存在",Toast.LENGTH_SHORT).show();
-                                }
-                                else{
-                                    noteTag.setText(newName);
-                                    File oldFile=new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + collection + "/" + name);
-                                    oldFile.renameTo(newFile);
-                                }
-                            }
-                        })
-                        .setNegativeButton("取消", null)//设置取消事件
-                        .show();
-            }
-        });
-
-        move.setOnClickListener(new View.OnClickListener() {//移动
-            @Override
-            public void onClick(View view) {
-                final TextView noteTagToMove=(TextView) view.findViewById(R.id.note_title);//获取item元素
-                final String move_name= (String) noteTagToMove.getText();//获取note标题
-                System.out.println("move name  "+move_name);
-                final String basePath = Environment.getExternalStorageDirectory().getPath() + "/Notability/";
-                final String[] collectList = (new File(basePath)).list();
-                //当前路径
-                final String oldPath=basePath + collection + "/" + move_name;
-
-                new AlertDialog.Builder(context).setTitle("移动到")
-//                        设置单选对话框，显示所有的 collection 目录,确定目的地
-                        .setSingleChoiceItems(collectList, 0, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //目标路径
-                                String newPath =Environment.getExternalStorageDirectory().getPath() + "/Notability/" + collectList[i] + "/" + move_name;
-                                //源文件
-                                File oldFile=new File(oldPath);
-                                if(oldFile.exists()) {
-                                    copyFolder(oldPath, newPath);//将文件复制到目标地点
-                                    oldFile.delete();//删除原文件
-                                }else{
-                                    Toast.makeText(context,"移动失败",Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        })
-                        .setPositiveButton("新建", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                final EditText creatEdit=new EditText(context);
-                                new AlertDialog.Builder(context).setTitle("新建分类")
-                                        .setView(creatEdit)
-                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                String newCollcetion=creatEdit.getText().toString();
-                                                File newCollectionFile=new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + newCollcetion);
-                                                if(newCollectionFile.exists()){
-                                                    Toast.makeText(context,"文件已存在",Toast.LENGTH_SHORT).show();
-                                                    return;
-                                                }else {
-                                                    newCollectionFile.mkdirs();
-                                                    String newPath=Environment.getExternalStorageDirectory().getPath() + "/Notability/" + newCollcetion + "/" + move_name;
-                                                    copyFolder(oldPath, newPath);//将文件复制到目标地点
-                                                    //源文件
-                                                    File oldFile=new File(oldPath);
-                                                    oldFile.delete();//删除原文件
-                                                }
-                                            }
-                                        })
-                                        .setNegativeButton("取消",null)
-                                        .show();
-                            }
-                        })
-                        .setNegativeButton("取消",null)
-                        .show();
-            }
-        });
-
-        delete.setOnClickListener(new View.OnClickListener() {//删除
-            @Override
-            public void onClick(View view) {
-                final TextView noteTagToDelete=(TextView) view.findViewById(R.id.note_title);//获取item元素
-                System.out.println("delete name  "+(String) noteTagToDelete.getText());
-                final String delete_name= (String) noteTagToDelete.getText();//获取note标题
-
-                File file=new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + collection + "/" + delete_name);
-                if(file.exists()){
-                    file.delete();
-                }else{
-                    System.out.println("file："+file);
-                    Toast.makeText(context,"删除失败",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         //对控件赋值
         final Note note = (Note) getItem(position);
         if (note != null) {
@@ -194,9 +88,123 @@ public class NoteListViewAdapter extends BaseAdapter {
             Log.i("last", " note.lastModified=" + note.getLastModified());
             title.setText(note.getTitle());
         }
+        rename.setOnClickListener(new View.OnClickListener() {//重命名
+            @Override
+            public void onClick(View view1) {
+                final TextView noteTag = (TextView) view.findViewById(R.id.note_title);//获取item元素
+                final String name = (String) noteTag.getText();//获取note标题
+                System.out.println("re ame  " + name);
+                final EditText renameEdit = new EditText(context);
+                renameEdit.setText(name);//设置初始值
+                new AlertDialog.Builder(context).setTitle("重命名")//设置标题
+                        .setView(renameEdit)//绑定编辑栏
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {//设置确定事件
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String newName = renameEdit.getText().toString();//获取新文件名
+                                System.out.println("newName  :" + newName);
+                                File newFile = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + collection + "/" + newName);
+                                if (newFile.exists()) {//若文件名已存在
+                                    Toast.makeText(context, "文件名已存在", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    noteTag.setText(newName);
+                                    File oldFile = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + collection + "/" + name);
+                                    oldFile.renameTo(newFile);
+                                }
+                            }
+                        })
+                        .setNegativeButton("取消", null)//设置取消事件
+                        .show();
+            }
+        });
+        final Adapter adapter = this;
+        move.setOnClickListener(new View.OnClickListener() {//移动
+            @Override
+            public void onClick(View view1) {
+                final TextView noteTagToMove = (TextView) view.findViewById(R.id.note_title);//获取item元素
+                final String move_name = (String) noteTagToMove.getText();//获取note标题
+                System.out.println("move name  " + move_name);
+                final String basePath = Environment.getExternalStorageDirectory().getPath() + "/Notability/";
+                final String[] collectList = (new File(basePath)).list();
+                //当前路径
+                final String oldPath = basePath + collection + "/" + move_name;
+
+                new AlertDialog.Builder(context).setTitle("移动到")
+//                        设置单选对话框，显示所有的 collection 目录,确定目的地
+                        .setItems(collectList, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //目标路径
+                                String newPath = Environment.getExternalStorageDirectory().getPath() + "/Notability/" + collectList[which] + "/" + move_name;
+                                if (FileHelper.moveDirectory(oldPath, newPath)) {
+                                    Toast.makeText(context, "移动成功", Toast.LENGTH_SHORT).show();
+                                    notelist.remove(pos);
+                                    notifyDataSetChanged();
+                                } else {
+                                    Toast.makeText(context, "移动失败", Toast.LENGTH_SHORT).show();
+                                }
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNeutralButton("新建", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                final EditText creatEdit = new EditText(context);
+                                new AlertDialog.Builder(context).setTitle("新建分类")
+                                        .setView(creatEdit)
+                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                String newCollcetion = creatEdit.getText().toString();
+                                                File newCollectionFile = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + newCollcetion);
+                                                if (newCollectionFile.exists()) {
+                                                    Toast.makeText(context, "文件已存在", Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                } else {
+                                                    newCollectionFile.mkdirs();
+                                                    String newPath = Environment.getExternalStorageDirectory().getPath() + "/Notability/" + newCollcetion + "/" + move_name;
+                                                    if (FileHelper.moveDirectory(oldPath, newPath)) {
+                                                        Toast.makeText(context, "移动成功", Toast.LENGTH_SHORT).show();
+                                                        notelist.remove(pos);
+                                                        notifyDataSetChanged();
+                                                    } else {
+                                                        Toast.makeText(context, "移动失败", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    dialogInterface.dismiss();
+                                                }
+                                            }
+                                        })
+                                        .setNegativeButton("取消", null)
+                                        .show();
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
+            }
+        });
+
+        delete.setOnClickListener(new View.OnClickListener() {//删除
+            @Override
+            public void onClick(View view1) {
+                final TextView noteTagToDelete = (TextView) view.findViewById(R.id.note_title);//获取item元素
+                System.out.println("delete name  " + (String) noteTagToDelete.getText());
+                final String delete_name = (String) noteTagToDelete.getText();//获取note标题
+
+                File file = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + collection + "/" + delete_name);
+                if (file.exists()) {
+                    FileHelper.removeDirectory(file);
+                    notelist.remove(pos);
+                    notifyDataSetChanged();
+                } else {
+                    System.out.println("file：" + file);
+                    Toast.makeText(context, "删除失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         return view;
     }
-    public void copyFolder(String oldPath, String newPath) {
+
+    private void copyFolder(String oldPath, String newPath) {
         try {
             (new File(newPath)).mkdirs(); //如果文件夹不存在 则建立新文件夹
             File a=new File(oldPath);

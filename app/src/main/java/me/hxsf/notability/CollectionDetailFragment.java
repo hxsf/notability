@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.File;
@@ -20,6 +19,7 @@ import java.util.Date;
 
 import me.hxsf.notability.data.Note;
 import me.hxsf.notability.dummy.DummyContent;
+import me.hxsf.notability.view.BaseActivity;
 
 /**
  * A fragment representing a single Collection detail screen.
@@ -69,7 +69,7 @@ public class CollectionDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
         File file = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/" + getArguments().getString(ARG_ITEM_ID));
-        ((CollectionDetailActivity) getActivity()).collection = getArguments().getString(ARG_ITEM_ID);
+        ((BaseActivity) getActivity()).collection = getArguments().getString(ARG_ITEM_ID);
         noteArrayList.clear();
         if (!file.exists()) {
             file.mkdirs();

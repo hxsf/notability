@@ -73,4 +73,12 @@ public class SaveLoad {
         }
         return null;
     }
+
+    public static File savecache(String dir, String fileName) {
+        File path = new File(dir);
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        return new File(dir, fileName);
+    }
 }

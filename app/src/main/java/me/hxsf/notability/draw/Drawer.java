@@ -22,6 +22,7 @@ import me.hxsf.notability.data.Line;
 import me.hxsf.notability.data.Note;
 import me.hxsf.notability.data.Paragraph;
 import me.hxsf.notability.data.Pixel;
+import me.hxsf.notability.until.SaveLoad;
 
 /**
  * Created by chen on 2015/11/28.
@@ -197,7 +198,7 @@ public class Drawer {
 //        note.finishBitmap = line.addNowBitmap(bitmap, imageView.getWidth(), imageView.getHeight());
         // save finish cache
         Log.i("savepng", "保存图片");
-        File f = new File(Environment.getExternalStorageDirectory().getPath() + "/" + path, "cache.png");
+        File f = SaveLoad.savecache(Environment.getExternalStorageDirectory().getPath() + "/" + path, "cache.png");
         Log.i("savepng - path", f.getPath());
         if (f.exists()) {
             Log.i("savepng", "isesixt");

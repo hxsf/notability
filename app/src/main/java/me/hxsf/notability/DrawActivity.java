@@ -44,6 +44,7 @@ public class DrawActivity extends AppCompatActivity {
         setContentView(R.layout.activity_draw);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.drawtoolbar);
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         String a = getIntent().getStringExtra("title");
@@ -56,6 +57,8 @@ public class DrawActivity extends AppCompatActivity {
         Log.v("a", a);
         getSupportActionBar().setTitle(a);
         img = (ImageView) findViewById(R.id.draw_space);
+
+        Log.i("ImageView Size", "1 W: " + img.getMeasuredWidth() + " H: " + img.getMeasuredHeight());
 
         final String finalA = a;
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -119,14 +122,6 @@ public class DrawActivity extends AppCompatActivity {
                 finish();
             }
         });
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.color_picker);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //TODO change save to colorpick
-//
-//            }
-//        });
 
         img.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -183,6 +178,16 @@ public class DrawActivity extends AppCompatActivity {
 //        SaveLoad.save("Notability/C1/N2", "1.obj", b);
 //        BaseLine b = (BaseLine) SaveLoad.load("Notability/C1/N2/1.obj");
 //        Log.v("sss", b.toString());
+    }
+
+    /**
+     * Dispatch onPause() to fragments.
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Player.stop();
+        drawer.stopShow();
     }
 
     /**

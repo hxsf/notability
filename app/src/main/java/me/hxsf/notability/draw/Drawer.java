@@ -3,6 +3,7 @@ package me.hxsf.notability.draw;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Environment;
@@ -99,7 +100,8 @@ public class Drawer {
     private boolean hasAudio; //判断是否有录音，true 时有
     private UndoList<Bitmap> undolist;
     private Stack<Line> redoStack;
-    private int bitmapWidth , bitmapoHeight;
+    private int bitmapWidth, bitmapHeight;
+    private Thread sh;
 
     /**
      //     * @param imageView  画板
@@ -111,9 +113,9 @@ public class Drawer {
         setPaint(color, penSize);
         this.imageView = imageView;
         bitmapWidth=imageView.getWidth();
-        bitmapoHeight=imageView.getHeight();
-        bitmap = Bitmap.createBitmap(bitmapWidth,bitmapoHeight , Bitmap.Config.ARGB_8888);
-        Log.v("w&h",bitmapWidth + ",  " + bitmapoHeight);
+        bitmapHeight = imageView.getHeight() - 128;
+        bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888);
+        Log.v("w&h", bitmapWidth + ",  " + bitmapHeight);
         canvas=new Canvas(bitmap);
         undolist = new UndoList<>();
         redoStack = new Stack<>();
@@ -186,9 +188,25 @@ public class Drawer {
 
     public void onNewNote(Note note, String png) {
         if ((new File(png)).exists()) {
-            bitmap = BitmapFactory.decodeFile(png).copy(Bitmap.Config.ARGB_8888, true);
-            canvas.setBitmap(bitmap);
+            Bitmap bitmap2 = BitmapFactory.decodeFile(png).copy(Bitmap.Config.ARGB_8888, true);
+            canvas.save();
+            Matrix matrix = new Matrix();
+            int width = bitmap2.getWidth();//获取资源位图的宽
+            int height = bitmap2.getHeight();//获取资源位图的高
+            float w = bitmapWidth / (float) width;
+            float h = bitmapHeight / (float) height;
+            if (w < h) {
+                h = w;
+            }
+            matrix.postScale(h, h);//获取缩放比例
+            Bitmap dstbmp = Bitmap.createBitmap(bitmap2, 0, 0,
+                    width, height, matrix, true); //根据缩放比例获取新的位图
+            canvas.drawBitmap(dstbmp, 0, 0, paint); //在屏幕上画出位图
+            canvas.restore();
+
             imageView.setImageBitmap(bitmap);
+//            canvas.setBitmap(bitmap);
+//            imageView.setImageBitmap(bitmap);
         }
         this.note = note;
         paragraph = new Paragraph();
@@ -196,10 +214,16 @@ public class Drawer {
 
     }
 
+    public void setSize(int bitmapWidth, int bitmapHeight) {
+        this.bitmapWidth = bitmapWidth;
+        this.bitmapHeight = bitmapHeight;
+    }
+
     public File getCache(String path) {
         saveAll(path);
         return new File(Environment.getExternalStorageDirectory().getPath() + "/" + path, "cache.png");
     }
+
     public void saveAll(String path) {
         note.addParagraph(paragraph);
         Log.i("savepng", "保存图片");
@@ -287,8 +311,8 @@ public class Drawer {
     }
 
     private void drawStart(){
-        Bitmap b1 = Bitmap.createBitmap(bitmap,0,0,bitmapWidth,bitmapoHeight);
-        Log.v("new W&H:", "W:" + bitmapWidth + "H:" + bitmapoHeight);
+        Bitmap b1 = Bitmap.createBitmap(bitmap, 0, 0, bitmapWidth, bitmapHeight);
+        Log.v("new W&H:", "W:" + bitmapWidth + "H:" + bitmapHeight);
         undolist.add(b1);//添加bitmap 快照
         line = new Line(paint.getColor(), paint.getStrokeWidth());//初始化一个新的line 对象
     }
@@ -309,6 +333,7 @@ public class Drawer {
             redoStack.clear();
         }
     }
+
     public void draw(BaseLine bl,long time) {
         if (bl.isstart==1) {
             path.reset();
@@ -383,12 +408,21 @@ public class Drawer {
 
     public void startShow() {
         GrayBitmap();
-        new Thread(show).start();
+        sh = new Thread(show);
+        sh.start();
     }
+
+    public void stopShow() {
+        if (sh != null) {
+            sh.interrupt();
+            sh = null;
+        }
+    }
+
     public void GrayBitmap(){
         Paint mPaint=new Paint();
         Bitmap temp = bitmap;
-        bitmap=Bitmap.createBitmap(bitmapWidth,bitmapoHeight, Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888);
         canvas.setBitmap(bitmap);
         mPaint.setAlpha(50);//设置透明度
         canvas.drawBitmap(temp, 0, 0, mPaint);//重新绘制图像

@@ -3,13 +3,10 @@ package me.hxsf.notability.until;
 import android.media.MediaPlayer;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import me.hxsf.notability.CollectionDetailActivity;
 
 /**
  * Created by hxsf on 15－12－03.
@@ -45,7 +42,9 @@ public class Player {
     }
 
     static public void stop() {
-        mediaPlayer.stop();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
     }
 
     static public void pause() {

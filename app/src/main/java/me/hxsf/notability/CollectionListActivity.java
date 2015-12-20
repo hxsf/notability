@@ -3,6 +3,8 @@ package me.hxsf.notability;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -16,16 +18,16 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import me.hxsf.notability.data.Note;
 import me.hxsf.notability.dummy.DummyContent;
+import me.hxsf.notability.until.SaveLoad;
 import me.hxsf.notability.view.BaseActivity;
 
 /**
@@ -57,30 +59,46 @@ public class CollectionListActivity extends BaseActivity {
             return;
         }
         System.out.println("show demo");
-        ViewParent viewParent = view.getParent();
-        if (viewParent instanceof FrameLayout) {
-            final FrameLayout frameLayout = (FrameLayout) viewParent;
-            final ImageView guideImage = new ImageView(this);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
-            guideImage.setLayoutParams(params);
-            guideImage.setScaleType(ImageView.ScaleType.FIT_XY);
-            guideImage.setImageResource(R.drawable.helloworld);
-            guideImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    frameLayout.removeView(guideImage);
-                    File nomedia = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/.nomedia");
-                    if (!nomedia.exists()) {
-                        try {
-                            nomedia.createNewFile();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            frameLayout.addView(guideImage);//添加引导图片
+        File nomedia = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/.nomedia");
+
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.helloworld);
+        File spicyDirectory = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/Default/Hello World");
+        if (!spicyDirectory.exists()) {
+            spicyDirectory.mkdirs();
         }
+        File filename = new File(Environment.getExternalStorageDirectory().getPath() + "/Notability/Default/Hello World/cache.png");
+        SaveLoad.save("Notability/Default/Hello World/", "note.obj", new Note("Hello World"));
+        FileOutputStream out = null;
+        try {
+            filename.createNewFile();
+            out = new FileOutputStream(filename);
+            System.out.println("create fos");
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+                }
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            out = null;
+        }
+        if (!nomedia.exists()) {
+            try {
+                nomedia.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Intent intent = new Intent(CollectionListActivity.this, DrawActivity.class);
+        intent.putExtra("title", "Default/Hello World");
+        startActivity(intent);
     }
 
     @Override

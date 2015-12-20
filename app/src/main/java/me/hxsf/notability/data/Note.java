@@ -1,7 +1,5 @@
 package me.hxsf.notability.data;
 
-import android.util.Log;
-
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,13 +14,19 @@ public class Note  implements Serializable {
     private static final long serialVersionUID = 4L;
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh时mm分");
     public String title;
-    private Date lastModified;
     public ArrayList<Paragraph> paragraphs;
     public String tag;
+    private Date lastModified;
 
     public Note() {
         title = "未命名 " + ((new SimpleDateFormat("yyyy-MM-dd hh时mm分")).format(new Date()));
         paragraphs =new ArrayList<>();
+    }
+
+    public Note(String title) {
+        this.lastModified = new Date();
+        this.title = title;
+        paragraphs = new ArrayList<>();
     }
 
     public Note(Date lastModified, ArrayList<Paragraph> paragraphs, String title) {
@@ -94,12 +98,12 @@ public class Note  implements Serializable {
         paragraphs.set(index, paragraph);
     }
 
-    public void setLastModified(long lastModified) {
-        this.lastModified = new Date(lastModified);
-    }
-
     public String getLastModified() {
         return sdf.format(lastModified);
+    }
+
+    public void setLastModified(long lastModified) {
+        this.lastModified = new Date(lastModified);
     }
 
     public String getTitle() {

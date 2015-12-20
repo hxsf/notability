@@ -18,6 +18,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 import me.hxsf.notability.data.Note;
@@ -125,7 +126,17 @@ public class NoteListViewAdapter extends BaseAdapter {
                 final String move_name = (String) noteTagToMove.getText();//获取note标题
                 System.out.println("move name  " + move_name);
                 final String basePath = Environment.getExternalStorageDirectory().getPath() + "/Notability/";
-                final String[] collectList = (new File(basePath)).list();
+                final String[] collectList = (new File(basePath)).list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        System.out.println(dir.getPath() + "/" + filename);
+                        if ((new File(dir, filename)).isDirectory()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });
                 //当前路径
                 final String oldPath = basePath + collection + "/" + move_name;
 

@@ -16,7 +16,6 @@ import android.view.animation.AnimationSet;
 import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
-import android.widget.Toast;
 
 import me.hxsf.notability.R;
 import me.hxsf.notability.draw.Drawer;
@@ -84,8 +83,6 @@ public class ArcMenu extends ViewGroup implements OnClickListener {
 
         a.recycle();
         margin = DensityUtil.dp2px(context, 16f);
-        System.out.println("margin: " + margin);
-        Toast.makeText(context, "margin: " + margin, Toast.LENGTH_SHORT).show();
 
     }
 

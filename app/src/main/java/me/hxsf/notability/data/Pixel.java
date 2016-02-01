@@ -31,13 +31,6 @@ public class Pixel  implements Serializable {
         this.x = x;
         this.y = y;
     }
-    public int getLastcolor() {
-        return lastcolor;
-    }
-
-    public void setLastcolor(int lastcolor) {
-        this.lastcolor = lastcolor;
-    }
 
     public long getTimestamp() {
         return timestamp;

@@ -40,7 +40,6 @@ public class Drawer {
     Runnable show = new Runnable() {
         @Override
         public void run() {
-//            TODO to change to timeline
             Paragraph paragraph;
             Line line;
             int totalParagraph,totalLine,totalPx;
@@ -375,6 +374,8 @@ public class Drawer {
                 p1=p2;
             }
             Log.v("redo", "path " + path.toString());
+            paint.setColor(line.getColor());
+            paint.setStrokeWidth(line.getPenSize());
             canvas.drawPath(path, paint);
             imageView.setImageBitmap(bitmap);
             drawEnd();

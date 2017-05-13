@@ -157,6 +157,7 @@ public class CollectionListActivity extends BaseActivity {
         if (!file.exists()) {
             file.mkdirs();
         }
+        File[] aa = file.listFiles();
         for (File dir : file.listFiles()) {
             if (dir.isDirectory()) {
                 DummyContent.addItem(new DummyContent.DummyItem(dir.getName(), "分类", ""));

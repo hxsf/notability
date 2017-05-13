@@ -101,6 +101,7 @@ public class DrawActivity extends AppCompatActivity {
                         Intent shareIntent = new Intent(Intent.ACTION_SEND);
                         shareIntent.setType("image/*");
                         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(Intent.createChooser(shareIntent, "请选择"));
                         break;
                 }
